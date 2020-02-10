@@ -2,8 +2,8 @@
 // File main.go
 package main
 
-import "fmt"
+import "iam/database"
 
 func main() {
-	fmt.Println("coucou")
+	database.Setup()
 }

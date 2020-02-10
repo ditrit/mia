@@ -33,11 +33,11 @@ output:
 
 linters:
   disable:
-    - errcheck          # TODO Later
-    - unused            # TODO Later
-    - gomnd             # TODO Later
-    - lll               # TODO Later
-    - gochecknoglobals  # TODO check Later
+    # - errcheck          # TODO Later
+    # - unused            # TODO Later
+    # - gomnd             # TODO Later
+    # - lll               # TODO Later
+    # - gochecknoglobals  # TODO check Later
   presets:
     - bugs
     - complexity
@@ -49,6 +49,12 @@ linters:
 issues:
   exclude-use-default: false
   exclude-rules:
+
+    # Don't change it
+    # ignore name convention from golint
+    - linters:
+        - errcheck
+      text: 'defer'
 
     # Don't change it
     # ignore name convention from golint
