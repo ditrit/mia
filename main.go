@@ -1,3 +1,5 @@
+//package main :
+// File main.go
 package main
 
 import "fmt"
