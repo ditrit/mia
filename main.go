@@ -2,8 +2,9 @@
 // File main.go
 package main
 
-import "iam/database"
+import "iam/core/database"
 
 func main() {
-	database.Setup()
+	idb := database.NewIAMDatabase("test.db")
+	idb.Setup()
 }
