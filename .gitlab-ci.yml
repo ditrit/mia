@@ -6,9 +6,9 @@ before_script:
 
     # Setup project environment
     - '# DELETE SYMLINK IF EXIST'
-    - '! test -f ${GOPATH}/src/gandalf-go || rm -f ${GOPATH}/src/gandalf-go'
+    - '! test -f ${GOPATH}/src/iam || rm -f ${GOPATH}/src/iam'
     - '# SETUP SYMLINK TO MAKE GO WORK PROPERLY'
-    - 'ln -s ${PWD} ${GOPATH}/src/gandalf-go'
+    - 'ln -s ${PWD} ${GOPATH}/src/iam'
 
     # Get all depedencies
     - 'go get -d -v ./...'
