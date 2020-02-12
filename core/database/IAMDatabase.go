@@ -30,7 +30,13 @@ func NewIAMDatabase(p string) IAMDatabase {
 	return res
 }
 
-func (idb *IAMDatabase) openConnection() {
+//OpenConnection :
+// Starts a connection with the database
+// Must call CloseConnection after manipulating
+// The default pattern is :
+//		idb.OpenConnection()
+//		defer idb.CloseConnection() //nolint: errcheck
+func (idb *IAMDatabase) OpenConnection() {
 	db, err := gorm.Open("sqlite3", idb.pathToDB)
 
 	if err != nil {
@@ -41,7 +47,10 @@ func (idb *IAMDatabase) openConnection() {
 	idb.db = db
 }
 
-func (idb *IAMDatabase) closeConnection() {
+//CloseConnection :
+// Ends a connection
+// Must be called after OpenConnection
+func (idb *IAMDatabase) CloseConnection() {
 	err := idb.db.Close()
 	if err != nil {
 		fmt.Println(err.Error())
@@ -49,6 +58,14 @@ func (idb *IAMDatabase) closeConnection() {
 	}
 
 	idb.db = nil
+}
+
+//DB :
+// Getter return the gorm object
+// This function can be used in calls between OpenConnection and Close Connection
+// OpenConnection() --> DB() --> CloseConnection
+func (idb IAMDatabase) DB() *gorm.DB {
+	return idb.db
 }
 
 //getListOfObjects :
@@ -75,9 +92,7 @@ func (idb IAMDatabase) dbInit() {
 
 	fmt.Printf("Create Empty Domain\n")
 
-	emptyModel, _ := model.NewDomain("")
-
-	idb.db.Create(&emptyModel)
+	idb.db.Create(model.GetRootDomain())
 }
 
 func (idb IAMDatabase) dbDrop() {
@@ -88,10 +103,13 @@ func (idb IAMDatabase) dbDrop() {
 }
 
 //Setup :
-func (idb IAMDatabase) Setup() {
-	idb.openConnection()
-	defer idb.closeConnection() //nolint: errcheck
+func (idb *IAMDatabase) Setup(dropTables bool) {
+	idb.OpenConnection()
+	defer idb.CloseConnection() //nolint: errcheck
 
-	idb.dbDrop()
+	if dropTables {
+		idb.dbDrop()
+	}
+
 	idb.dbInit()
 }

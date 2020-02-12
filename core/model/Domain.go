@@ -4,8 +4,7 @@ package model
 
 import (
 	"errors"
-
-	"iam/core"
+	"iam/core/constant"
 )
 
 //Domain :
@@ -18,8 +17,11 @@ type Domain struct {
 //NewDomain :
 // Constructor
 func NewDomain(name string) (*Domain, error) {
-	if len(name) > core.NAME_MAX_LEN {
+	switch {
+	case len(name) > constant.NAME_MAX_LEN:
 		return nil, errors.New("the name cannot be longer that 255 characters")
+	case len(name) == 0:
+		return nil, errors.New("the name cannot be empty")
 	}
 
 	res := new(Domain)
@@ -28,4 +30,12 @@ func NewDomain(name string) (*Domain, error) {
 	return res, nil
 }
 
-//TODO : find a way to create safely the empty domain common of everyone
+//GetRootDomain :
+// Should not be called in normal workflow
+// Used only in database initialization
+func GetRootDomain() *Domain {
+	res := new(Domain)
+	res.Name = ""
+
+	return res
+}

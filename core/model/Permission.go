@@ -2,21 +2,19 @@
 // Describe how a permission is stored
 package model
 
-import (
-	"iam/core"
-)
+import "iam/core/constant"
 
 //Permission :
 type Permission struct {
 	IDRole   uint64
 	IDDomain uint64
 	IDObject uint64
-	Action   core.Action
+	Action   constant.Action
 }
 
 //NewPermission :
 // Constructor
-func NewPermission(r Role, d Domain, o Object, a core.Action) Permission {
+func NewPermission(r Role, d Domain, o Object, a constant.Action) Permission {
 	res := Permission{
 		IDRole:   r.ID,
 		IDDomain: d.ID,

@@ -37,6 +37,6 @@ golangci-lint:
 go_test:
     stage: Lint/Test
     script:
-        - 'go test'
+        - 'go test ./...'
 
 ...

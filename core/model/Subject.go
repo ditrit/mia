@@ -4,8 +4,7 @@ package model
 
 import (
 	"errors"
-
-	"iam/core"
+	"iam/core/constant"
 )
 
 //Subject :
@@ -18,8 +17,11 @@ type Subject struct {
 //NewSubject :
 // Constructor
 func NewSubject(name string) (*Subject, error) {
-	if len(name) > core.NAME_MAX_LEN {
+	switch {
+	case len(name) > constant.NAME_MAX_LEN:
 		return nil, errors.New("the name cannot be longer that 255 characters")
+	case len(name) == 0:
+		return nil, errors.New("the name cannot be empty")
 	}
 
 	res := new(Subject)

@@ -1,6 +1,6 @@
-// Package core :
+// Package constant :
 // Contains constant variables
-package core
+package constant
 
 //nolint: golint, stylecheck
 const (

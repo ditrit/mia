@@ -4,8 +4,7 @@ package model
 
 import (
 	"errors"
-
-	"iam/core"
+	"iam/core/constant"
 )
 
 //Role :
@@ -18,7 +17,7 @@ type Role struct {
 //NewRole :
 // Constructor
 func NewRole(name string) (*Role, error) {
-	if len(name) > core.NAME_MAX_LEN {
+	if len(name) > constant.NAME_MAX_LEN {
 		return nil, errors.New("the name cannot be longer that 255 characters")
 	}
 
