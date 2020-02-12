@@ -4,6 +4,7 @@ package database
 
 import (
 	"fmt"
+	"sync"
 
 	"iam/core/model"
 
@@ -17,6 +18,7 @@ import (
 type IAMDatabase struct {
 	db       *gorm.DB
 	pathToDB string
+	m        *sync.Mutex
 }
 
 //NewIAMDatabase :
@@ -25,6 +27,7 @@ func NewIAMDatabase(p string) IAMDatabase {
 	res := IAMDatabase{
 		db:       nil,
 		pathToDB: p,
+		m:        &sync.Mutex{},
 	}
 
 	return res
@@ -37,6 +40,7 @@ func NewIAMDatabase(p string) IAMDatabase {
 //		idb.OpenConnection()
 //		defer idb.CloseConnection() //nolint: errcheck
 func (idb *IAMDatabase) OpenConnection() {
+	idb.m.Lock()
 	db, err := gorm.Open("sqlite3", idb.pathToDB)
 
 	if err != nil {
@@ -44,6 +48,7 @@ func (idb *IAMDatabase) OpenConnection() {
 		panic("failed to connect database")
 	}
 
+	// db.LogMode(true)
 	idb.db = db
 }
 
@@ -58,6 +63,7 @@ func (idb *IAMDatabase) CloseConnection() {
 	}
 
 	idb.db = nil
+	idb.m.Unlock()
 }
 
 //DB :

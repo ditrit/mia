@@ -14,16 +14,19 @@ import (
 func askDBForSubjects(
 	idb database.IAMDatabase,
 	name string,
+	haveToOpenConnection bool,
 	fIfFound func(*gorm.DB, model.Subject) (model.Subject, error),
 	fIfNotFound func(*gorm.DB, model.Subject) (model.Subject, error),
 ) (model.Subject, error) {
 	var querySubject model.Subject
 
-	idb.OpenConnection()
-	defer idb.CloseConnection() //nolint: errcheck
-
 	if len(name) == 0 {
 		return querySubject, errors.New("the name cannot be empty")
+	}
+
+	if haveToOpenConnection {
+		idb.OpenConnection()
+		defer idb.CloseConnection() //nolint: errcheck
 	}
 
 	res := idb.DB().Where("name = ?", name).First(&querySubject)
@@ -48,7 +51,7 @@ func AddSubject(
 	idb database.IAMDatabase,
 	s model.Subject,
 ) error {
-	_, err := askDBForSubjects(idb, s.Name,
+	_, err := askDBForSubjects(idb, s.Name, true,
 		func(_ *gorm.DB, qs model.Subject) (model.Subject, error) {
 			return qs, errors.New("the subject already exists in the iam")
 		},
@@ -69,10 +72,10 @@ func RemoveSubject(
 	idb database.IAMDatabase,
 	s model.Subject,
 ) error {
-	_, err := askDBForSubjects(idb, s.Name,
-		func(_ *gorm.DB, qs model.Subject) (model.Subject, error) {
-			idb.DB().Delete(&s)
-			return qs, idb.DB().Error
+	_, err := askDBForSubjects(idb, s.Name, true,
+		func(db *gorm.DB, qs model.Subject) (model.Subject, error) {
+			res := db.Delete(&s)
+			return qs, res.Error
 		},
 		func(db *gorm.DB, qs model.Subject) (model.Subject, error) {
 			return qs, errors.New("the subject does not exist in the iam")
@@ -91,10 +94,14 @@ func RenameSubject(
 	s model.Subject,
 	newName string,
 ) error {
-	_, err := askDBForSubjects(idb, s.Name,
-		func(_ *gorm.DB, qs model.Subject) (model.Subject, error) {
-			idb.DB().Model(&s).Update("name", newName)
-			return qs, idb.DB().Error
+	if newName == "" {
+		return errors.New("the new name cannot be empty")
+	}
+
+	_, err := askDBForSubjects(idb, s.Name, true,
+		func(db *gorm.DB, qs model.Subject) (model.Subject, error) {
+			res := db.Model(&s).Update("name", newName)
+			return qs, res.Error
 		},
 		func(db *gorm.DB, qs model.Subject) (model.Subject, error) {
 			return qs, errors.New("the subject does not exist in the iam")
@@ -111,7 +118,7 @@ func GetSubject(
 	idb database.IAMDatabase,
 	name string,
 ) (model.Subject, error) {
-	return askDBForSubjects(idb, name,
+	return askDBForSubjects(idb, name, true,
 		func(db *gorm.DB, qs model.Subject) (model.Subject, error) {
 			return qs, db.Error
 		},
@@ -123,15 +130,64 @@ func GetSubject(
 // AddSubjectLink :
 // add a relation between two subjects in the IAM
 // returns an error if :
-//	- one of the subjects already exists in the iam
-//	- one of the subjects has an empty name
+//	- one of the subjects does not exists in the iam
 //	- the link already exists
 func AddSubjectLink(
 	idb database.IAMDatabase,
 	sParent model.Subject,
 	sChild model.Subject,
 ) error {
-	return nil
+	var (
+		sLink    model.SubjectLink
+		parentDB model.Subject
+		childDB  model.Subject
+		err      error
+	)
+
+	idb.OpenConnection()
+	defer idb.CloseConnection() //nolint: errcheck
+
+	// Search parent subject
+	parentDB, err = askDBForSubjects(idb, sParent.Name, false,
+		func(db *gorm.DB, qs model.Subject) (model.Subject, error) {
+			return qs, db.Error
+		},
+		func(db *gorm.DB, qs model.Subject) (model.Subject, error) {
+			return qs, errors.New("the parent subject does not exist in the iam")
+		})
+
+	if err != nil {
+		return err
+	}
+
+	// Search child subject
+	childDB, err = askDBForSubjects(idb, sChild.Name, false,
+		func(db *gorm.DB, qs model.Subject) (model.Subject, error) {
+			return qs, db.Error
+		},
+		func(db *gorm.DB, qs model.Subject) (model.Subject, error) {
+			return qs, errors.New("the child subject does not exist in the iam")
+		})
+
+	if err != nil {
+		return err
+	}
+
+	res := idb.DB().Where("id_subject_parent = ?", parentDB.ID).Where("id_subject_child = ?", childDB.ID).Take(&sLink)
+	if res.Error != nil && !res.RecordNotFound() {
+		return res.Error
+	}
+
+	if !res.RecordNotFound() {
+		return errors.New("the connection link already exists")
+	}
+
+	sLink.IDSubjectParent = parentDB.ID
+	sLink.IDSubjectChild = childDB.ID
+
+	res = idb.DB().Create(&sLink)
+
+	return res.Error
 }
 
 // RemoveSubjectLink :
@@ -161,5 +217,6 @@ func AddSubjectArchitecture(
 	ignoreAlreadyExistsSubject bool,
 	ignoreAlreadyExistsLinks bool,
 ) error {
+	// TODO: implement + test
 	return nil
 }
