@@ -15,7 +15,7 @@ func TestMain(m *testing.M) {
 
 	ret := m.Run()
 
-	// os.Remove("test.db") //nolint: errcheck
+	os.Remove("test.db") //nolint: errcheck
 	os.Exit(ret)
 }
 
