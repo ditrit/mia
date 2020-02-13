@@ -1,0 +1,9 @@
+ToDo List iam:
+	☐ Implémenter le model
+	☐ Décrire l'interface
+	☐ Implémenter l'interface
+	☐ Tester l'interface
+	☐ Faire la fonction Enforce
+
+ToDo Boring:
+	☐ Vérifier si à l'ajout d'une arête on reste sur un DAG

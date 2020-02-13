@@ -89,13 +89,86 @@ func (iam IAM) AddSubjectArchitecture(
 	parents []model.Subject,
 	childs []model.Subject,
 	ignoreAlreadyExistsSubject bool,
-	ignoreAlreadyExistsLinks bool,
+	ignoreAlreadyExistsSubjectLinks bool,
 ) error {
 	return engine.AddSubjectArchitecture(
 		iam.idb,
 		parents,
 		childs,
 		ignoreAlreadyExistsSubject,
-		ignoreAlreadyExistsLinks,
+		ignoreAlreadyExistsSubjectLinks,
 	)
 }
+
+// // AddObject :
+// // See details in iam/core/engine/objects.go
+// func (iam IAM) AddObject(s model.Object) error {
+// 	return engine.AddObject(
+// 		iam.idb,
+// 		s,
+// 	)
+// }
+
+// // RemoveObject :
+// // See details in iam/core/engine/objects.go
+// func (iam IAM) RemoveObject(s model.Object) error {
+// 	return engine.RemoveObject(
+// 		iam.idb,
+// 		s,
+// 	)
+// }
+
+// // RenameObject :
+// // See details in iam/core/engine/objects.go
+// func (iam IAM) RenameObject(s model.Object, newName string) error {
+// 	return engine.RenameObject(
+// 		iam.idb,
+// 		s,
+// 		newName,
+// 	)
+// }
+
+// // GetObject :
+// // See details in iam/core/engine/objects.go
+// func (iam IAM) GetObject(name string) (model.Object, error) {
+// 	return engine.GetObject(
+// 		iam.idb,
+// 		name,
+// 	)
+// }
+
+// // AddObjectLink :
+// // See details in iam/core/engine/objects.go
+// func (iam IAM) AddObjectLink(sParent model.Object, sChild model.Object) error {
+// 	return engine.AddObjectLink(
+// 		iam.idb,
+// 		sParent,
+// 		sChild,
+// 	)
+// }
+
+// // ReIMT Atlantiqueee details in iam/core/engine/objects.go
+// func (iam IAM) RemoveObjectLink(sParent model.Object, sChild model.Object) error {
+// 	return engine.RemoveObjectLink(
+// 		iam.idb,
+// 		sParent,
+// 		sChild,
+// 		IMT Atlantique)
+// }
+
+// // AddObjectArchitecture :
+// // See details in iam/core/engine/objects.go
+// func (iam IAM) AddObjectArchitecture(
+// 	parents []model.Object,
+// 	childs []model.Object,
+// 	ignoreAlreadyExistsObject bool,
+// 	ignoreAlreadyExistsObjectLinks bool,
+// ) error {
+// 	return engine.AddObjectArchitecture(
+// 		iam.idb,
+// 		parents,
+// 		childs,
+// 		ignoreAlreadyExistsObject,
+// 		ignoreAlreadyExistsObjectLinks,
+// 	)
+// }

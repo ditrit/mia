@@ -42,6 +42,67 @@ func askDBForSubjects(
 	return fIfFound(res, querySubject)
 }
 
+func askDBForSubjectLinks(
+	idb database.IAMDatabase,
+	parentName string,
+	childName string,
+	haveToOpenConnection bool,
+	fIfFound func(*gorm.DB, model.SubjectLink) error,
+	fIfNotFound func(*gorm.DB, model.SubjectLink) error,
+) error {
+	var (
+		sLink    model.SubjectLink
+		parentDB model.Subject
+		childDB  model.Subject
+		err      error
+	)
+
+	if haveToOpenConnection {
+		idb.OpenConnection()
+		defer idb.CloseConnection() //nolint: errcheck
+	}
+
+	// Search parent subject
+	parentDB, err = askDBForSubjects(idb, parentName, false,
+		func(db *gorm.DB, qs model.Subject) (model.Subject, error) {
+			return qs, db.Error
+		},
+		func(db *gorm.DB, qs model.Subject) (model.Subject, error) {
+			return qs, errors.New("the parent subject does not exist in the iam")
+		})
+
+	if err != nil {
+		return err
+	}
+
+	// Search child subject
+	childDB, err = askDBForSubjects(idb, childName, false,
+		func(db *gorm.DB, qs model.Subject) (model.Subject, error) {
+			return qs, db.Error
+		},
+		func(db *gorm.DB, qs model.Subject) (model.Subject, error) {
+			return qs, errors.New("the child subject does not exist in the iam")
+		})
+
+	if err != nil {
+		return err
+	}
+
+	res := idb.DB().Where("id_subject_parent = ?", parentDB.ID).Where("id_subject_child = ?", childDB.ID).Take(&sLink)
+	if res.Error != nil && !res.RecordNotFound() {
+		return res.Error
+	}
+
+	sLink.IDSubjectParent = parentDB.ID
+	sLink.IDSubjectChild = childDB.ID
+
+	if res.RecordNotFound() {
+		return fIfNotFound(res, sLink)
+	}
+
+	return fIfFound(res, sLink)
+}
+
 // AddSubject :
 // add subject in the IAM
 // returns an error if :
@@ -68,6 +129,7 @@ func AddSubject(
 // remove subject in the IAM
 // returns an error if :
 //	- the subject does not exist in the iam
+//	- the subject is a parent or a child in subjectLinks
 func RemoveSubject(
 	idb database.IAMDatabase,
 	s model.Subject,
@@ -137,57 +199,16 @@ func AddSubjectLink(
 	sParent model.Subject,
 	sChild model.Subject,
 ) error {
-	var (
-		sLink    model.SubjectLink
-		parentDB model.Subject
-		childDB  model.Subject
-		err      error
+	return askDBForSubjectLinks(idb, sParent.Name, sChild.Name, true,
+		func(db *gorm.DB, qs model.SubjectLink) error {
+			return errors.New("the connection link already exists")
+		},
+		func(db *gorm.DB, qs model.SubjectLink) error {
+			db.Error = nil
+			res := db.Create(&qs)
+			return res.Error
+		},
 	)
-
-	idb.OpenConnection()
-	defer idb.CloseConnection() //nolint: errcheck
-
-	// Search parent subject
-	parentDB, err = askDBForSubjects(idb, sParent.Name, false,
-		func(db *gorm.DB, qs model.Subject) (model.Subject, error) {
-			return qs, db.Error
-		},
-		func(db *gorm.DB, qs model.Subject) (model.Subject, error) {
-			return qs, errors.New("the parent subject does not exist in the iam")
-		})
-
-	if err != nil {
-		return err
-	}
-
-	// Search child subject
-	childDB, err = askDBForSubjects(idb, sChild.Name, false,
-		func(db *gorm.DB, qs model.Subject) (model.Subject, error) {
-			return qs, db.Error
-		},
-		func(db *gorm.DB, qs model.Subject) (model.Subject, error) {
-			return qs, errors.New("the child subject does not exist in the iam")
-		})
-
-	if err != nil {
-		return err
-	}
-
-	res := idb.DB().Where("id_subject_parent = ?", parentDB.ID).Where("id_subject_child = ?", childDB.ID).Take(&sLink)
-	if res.Error != nil && !res.RecordNotFound() {
-		return res.Error
-	}
-
-	if !res.RecordNotFound() {
-		return errors.New("the connection link already exists")
-	}
-
-	sLink.IDSubjectParent = parentDB.ID
-	sLink.IDSubjectChild = childDB.ID
-
-	res = idb.DB().Create(&sLink)
-
-	return res.Error
 }
 
 // RemoveSubjectLink :
@@ -199,7 +220,15 @@ func RemoveSubjectLink(
 	sParent model.Subject,
 	sChild model.Subject,
 ) error {
-	return nil
+	return askDBForSubjectLinks(idb, sParent.Name, sChild.Name, true,
+		func(db *gorm.DB, qs model.SubjectLink) error {
+			res := db.Delete(&qs)
+			return res.Error
+		},
+		func(db *gorm.DB, qs model.SubjectLink) error {
+			return errors.New("the connection link does not exist")
+		},
+	)
 }
 
 // AddSubjectArchitecture :

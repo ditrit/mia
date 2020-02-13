@@ -1,4 +1,4 @@
-package engine_test
+package subjects_test
 
 import (
 	"iam/core"
@@ -153,5 +153,28 @@ func TestAddSubjectLink(t *testing.T) {
 
 	if err == nil {
 		t.Errorf("add subject link shouldn't work cause subject link already exist")
+	}
+}
+
+func TestRemoveSubjectLink(t *testing.T) {
+	kevin, _ := model.NewSubject("kevin")
+	laure, _ := model.NewSubject("laure")
+	maude, _ := model.NewSubject("maude")
+
+	_ = iam.AddSubject(*kevin)
+	_ = iam.AddSubject(*laure)
+
+	_ = iam.AddSubjectLink(*kevin, *laure)
+
+	err := iam.RemoveSubjectLink(*kevin, *laure)
+
+	if err != nil {
+		t.Errorf("remove subject link should have worked")
+	}
+
+	err = iam.RemoveSubjectLink(*laure, *maude)
+
+	if err == nil {
+		t.Errorf("remove subject link should have failed cause it doesn't exist")
 	}
 }
