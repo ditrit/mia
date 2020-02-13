@@ -28,8 +28,8 @@ func NewIAM(p string, dropTables bool) IAM {
 
 // AddSubject :
 // See details in iam/core/engine/subjects.go
-func (iam IAM) AddSubject(s model.Subject) error {
-	return engine.AddSubject(
+func (iam IAM) AddSubject(s model.Item) error {
+	return engine.AddItem(
 		iam.idb,
 		s,
 	)
@@ -37,8 +37,8 @@ func (iam IAM) AddSubject(s model.Subject) error {
 
 // RemoveSubject :
 // See details in iam/core/engine/subjects.go
-func (iam IAM) RemoveSubject(s model.Subject) error {
-	return engine.RemoveSubject(
+func (iam IAM) RemoveSubject(s model.Item) error {
+	return engine.RemoveItem(
 		iam.idb,
 		s,
 	)
@@ -46,8 +46,8 @@ func (iam IAM) RemoveSubject(s model.Subject) error {
 
 // RenameSubject :
 // See details in iam/core/engine/subjects.go
-func (iam IAM) RenameSubject(s model.Subject, newName string) error {
-	return engine.RenameSubject(
+func (iam IAM) RenameSubject(s model.Item, newName string) error {
+	return engine.RenameItem(
 		iam.idb,
 		s,
 		newName,
@@ -56,17 +56,18 @@ func (iam IAM) RenameSubject(s model.Subject, newName string) error {
 
 // GetSubject :
 // See details in iam/core/engine/subjects.go
-func (iam IAM) GetSubject(name string) (model.Subject, error) {
-	return engine.GetSubject(
+func (iam IAM) GetSubject(name string) (model.Item, error) {
+	return engine.GetItem(
 		iam.idb,
+		model.ITEM_TYPE_SUBJ,
 		name,
 	)
 }
 
 // AddSubjectLink :
 // See details in iam/core/engine/subjects.go
-func (iam IAM) AddSubjectLink(sParent model.Subject, sChild model.Subject) error {
-	return engine.AddSubjectLink(
+func (iam IAM) AddSubjectLink(sParent model.Item, sChild model.Item) error {
+	return engine.AddItemLink(
 		iam.idb,
 		sParent,
 		sChild,
@@ -75,8 +76,8 @@ func (iam IAM) AddSubjectLink(sParent model.Subject, sChild model.Subject) error
 
 // RemoveSubjectLink :
 // See details in iam/core/engine/subjects.go
-func (iam IAM) RemoveSubjectLink(sParent model.Subject, sChild model.Subject) error {
-	return engine.RemoveSubjectLink(
+func (iam IAM) RemoveSubjectLink(sParent model.Item, sChild model.Item) error {
+	return engine.RemoveItemLink(
 		iam.idb,
 		sParent,
 		sChild,
@@ -86,12 +87,12 @@ func (iam IAM) RemoveSubjectLink(sParent model.Subject, sChild model.Subject) er
 // AddSubjectArchitecture :
 // See details in iam/core/engine/subjects.go
 func (iam IAM) AddSubjectArchitecture(
-	parents []model.Subject,
-	childs []model.Subject,
+	parents []model.Item,
+	childs []model.Item,
 	ignoreAlreadyExistsSubject bool,
 	ignoreAlreadyExistsSubjectLinks bool,
 ) error {
-	return engine.AddSubjectArchitecture(
+	return engine.AddItemArchitecture(
 		iam.idb,
 		parents,
 		childs,

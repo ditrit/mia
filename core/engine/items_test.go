@@ -1,4 +1,4 @@
-package subjects_test
+package engine_test
 
 import (
 	"iam/core"
@@ -44,7 +44,8 @@ func TestAddSubject(t *testing.T) {
 		t.Errorf("name is not the same")
 	}
 
-	emptySubj := new(model.Subject)
+	emptySubj := new(model.Item)
+	emptySubj.Type = model.ITEM_TYPE_SUBJ
 	emptySubj.Name = ""
 
 	err = iam.AddSubject(*emptySubj)

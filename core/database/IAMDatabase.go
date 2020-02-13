@@ -78,15 +78,11 @@ func (idb IAMDatabase) DB() *gorm.DB {
 // returns the list of objects that will be represented in the database
 func (IAMDatabase) getListOfObjects() []interface{} {
 	return []interface{}{
-		&model.Domain{},
-		&model.DomainLink{},
-		&model.Object{},
-		&model.ObjectLink{},
-		&model.Subject{},
-		&model.SubjectLink{},
 		&model.Role{},
-		&model.Assignment{},
-		&model.Permission{},
+		&model.Item{},
+		&model.ItemLink{},
+		// &model.Assignment{},
+		// &model.Permission{},
 	}
 }
 
