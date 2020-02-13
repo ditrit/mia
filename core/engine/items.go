@@ -105,7 +105,7 @@ func askDBForItemLinks(
 	return fIfFound(res, sLink)
 }
 
-func checkIfItemsAreConsistents(items ...model.Item) error {
+func checkIfItemsAreConsistents(iType model.ItemType, items ...model.Item) error {
 	if len(items) == 0 {
 		return nil
 	}
@@ -119,19 +119,12 @@ func checkIfItemsAreConsistents(items ...model.Item) error {
 		return false
 	}
 
-	var (
-		ref  model.ItemType
-		init bool = false
-	)
-
 	for i := range items {
 		if !checkIfKnown(items[i]) {
 			return errors.New("unknown type")
 		}
 
-		if !init {
-			ref = items[i].Type
-		} else if ref != items[i].Type {
+		if iType != items[i].Type {
 			return errors.New("type must be the same for all items")
 		}
 	}
@@ -146,9 +139,10 @@ func checkIfItemsAreConsistents(items ...model.Item) error {
 //	- the item has an empty name
 func AddItem(
 	idb database.IAMDatabase,
+	iType model.ItemType,
 	s model.Item,
 ) error {
-	if err := checkIfItemsAreConsistents(s); err != nil {
+	if err := checkIfItemsAreConsistents(iType, s); err != nil {
 		return err
 	}
 
@@ -172,9 +166,10 @@ func AddItem(
 //	- the item is a parent or a child in ItemLinks
 func RemoveItem(
 	idb database.IAMDatabase,
+	iType model.ItemType,
 	s model.Item,
 ) error {
-	if err := checkIfItemsAreConsistents(s); err != nil {
+	if err := checkIfItemsAreConsistents(iType, s); err != nil {
 		return err
 	}
 
@@ -197,10 +192,11 @@ func RemoveItem(
 //	- the new name given is empty
 func RenameItem(
 	idb database.IAMDatabase,
+	iType model.ItemType,
 	s model.Item,
 	newName string,
 ) error {
-	if err := checkIfItemsAreConsistents(s); err != nil {
+	if err := checkIfItemsAreConsistents(iType, s); err != nil {
 		return err
 	}
 
@@ -245,10 +241,11 @@ func GetItem(
 //	- the link already exists
 func AddItemLink(
 	idb database.IAMDatabase,
+	iType model.ItemType,
 	sParent model.Item,
 	sChild model.Item,
 ) error {
-	if err := checkIfItemsAreConsistents(sParent, sChild); err != nil {
+	if err := checkIfItemsAreConsistents(iType, sParent, sChild); err != nil {
 		return err
 	}
 
@@ -270,10 +267,11 @@ func AddItemLink(
 //	- the link does not exist
 func RemoveItemLink(
 	idb database.IAMDatabase,
+	iType model.ItemType,
 	sParent model.Item,
 	sChild model.Item,
 ) error {
-	if err := checkIfItemsAreConsistents(sParent, sChild); err != nil {
+	if err := checkIfItemsAreConsistents(iType, sParent, sChild); err != nil {
 		return err
 	}
 
@@ -298,6 +296,7 @@ func RemoveItemLink(
 // We can ignore some of this error with the other parameters
 func AddItemArchitecture(
 	idb database.IAMDatabase,
+	iType model.ItemType,
 	parents []model.Item,
 	childs []model.Item,
 	ignoreAlreadyExistsItem bool,

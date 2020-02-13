@@ -43,6 +43,10 @@ func (idb *IAMDatabase) OpenConnection() {
 	idb.m.Lock()
 	db, err := gorm.Open("sqlite3", idb.pathToDB)
 
+	gorm.DefaultTableNameHandler = func(db *gorm.DB, defaultTableName string) string {
+		return "iam_" + defaultTableName
+	}
+
 	if err != nil {
 		fmt.Println(err.Error())
 		panic("failed to connect database")
