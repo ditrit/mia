@@ -2,15 +2,20 @@
 // File main.go
 package main
 
-import (
-	"iam/core"
-	"iam/core/model"
-)
+// func getDefaultRoles() []string {
+// 	return []string{
+// 		"Administrator",
+// 		"ScrumMaster",
+// 		"ProductOwner",
+// 		"Dev",
+// 		"Ops",
+// 	}
+// }
 
 func main() {
-	iam := core.NewIAM("test.db", true)
+	// iam := core.NewIAM("test.db", true)
 
-	s, _ := model.NewSubject("coucou")
+	// for _, roleName := range getDefaultRoles() {
 
-	_ = iam.AddSubject(*s)
+	// }
 }

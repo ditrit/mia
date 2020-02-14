@@ -85,8 +85,8 @@ func (IAMDatabase) getListOfObjects() []interface{} {
 		&model.Role{},
 		&model.Item{},
 		&model.ItemLink{},
-		// &model.Assignment{},
-		// &model.Permission{},
+		&model.Assignment{},
+		&model.Permission{},
 	}
 }
 

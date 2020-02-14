@@ -3,6 +3,7 @@
 package core
 
 import (
+	"iam/core/constant"
 	"iam/core/database"
 	"iam/core/engine"
 	"iam/core/model"
@@ -26,39 +27,51 @@ func NewIAM(p string, dropTables bool) IAM {
 	return res
 }
 
+// AddRole :
+// See details in iam/core/engine/roles.go
+func (iam IAM) AddRole(name string) error {
+	return engine.AddRole(iam.idb, name)
+}
+
+// RemoveRole :
+// See details in iam/core/engine/roles.go
+func (iam IAM) RemoveRole(name string) error {
+	return engine.RemoveRole(iam.idb, name)
+}
+
 // AddSubject :
-// See details in iam/core/engine/subjects.go
-func (iam IAM) AddSubject(s model.Item) error {
+// See details in iam/core/engine/items.go
+func (iam IAM) AddSubject(name string) error {
 	return engine.AddItem(
 		iam.idb,
 		model.ITEM_TYPE_SUBJ,
-		s,
+		name,
 	)
 }
 
 // RemoveSubject :
-// See details in iam/core/engine/subjects.go
-func (iam IAM) RemoveSubject(s model.Item) error {
+// See details in iam/core/engine/items.go
+func (iam IAM) RemoveSubject(name string) error {
 	return engine.RemoveItem(
 		iam.idb,
 		model.ITEM_TYPE_SUBJ,
-		s,
+		name,
 	)
 }
 
 // RenameSubject :
-// See details in iam/core/engine/subjects.go
-func (iam IAM) RenameSubject(s model.Item, newName string) error {
+// See details in iam/core/engine/items.go
+func (iam IAM) RenameSubject(name string, newName string) error {
 	return engine.RenameItem(
 		iam.idb,
 		model.ITEM_TYPE_SUBJ,
-		s,
+		name,
 		newName,
 	)
 }
 
 // GetSubject :
-// See details in iam/core/engine/subjects.go
+// See details in iam/core/engine/items.go
 func (iam IAM) GetSubject(name string) (model.Item, error) {
 	return engine.GetItem(
 		iam.idb,
@@ -68,32 +81,32 @@ func (iam IAM) GetSubject(name string) (model.Item, error) {
 }
 
 // AddSubjectLink :
-// See details in iam/core/engine/subjects.go
-func (iam IAM) AddSubjectLink(sParent model.Item, sChild model.Item) error {
+// See details in iam/core/engine/items.go
+func (iam IAM) AddSubjectLink(nP string, nC string) error {
 	return engine.AddItemLink(
 		iam.idb,
 		model.ITEM_TYPE_SUBJ,
-		sParent,
-		sChild,
+		nP,
+		nC,
 	)
 }
 
 // RemoveSubjectLink :
-// See details in iam/core/engine/subjects.go
-func (iam IAM) RemoveSubjectLink(sParent model.Item, sChild model.Item) error {
+// See details in iam/core/engine/items.go
+func (iam IAM) RemoveSubjectLink(nP string, nC string) error {
 	return engine.RemoveItemLink(
 		iam.idb,
 		model.ITEM_TYPE_SUBJ,
-		sParent,
-		sChild,
+		nP,
+		nC,
 	)
 }
 
 // AddSubjectArchitecture :
-// See details in iam/core/engine/subjects.go
+// See details in iam/core/engine/items.go
 func (iam IAM) AddSubjectArchitecture(
-	parents []model.Item,
-	childs []model.Item,
+	parents []string,
+	childs []string,
 	ignoreAlreadyExistsSubject bool,
 	ignoreAlreadyExistsSubjectLinks bool,
 ) error {
@@ -108,38 +121,38 @@ func (iam IAM) AddSubjectArchitecture(
 }
 
 // AddObject :
-// See details in iam/core/engine/objects.go
-func (iam IAM) AddObject(s model.Item) error {
+// See details in iam/core/engine/items.go
+func (iam IAM) AddObject(name string) error {
 	return engine.AddItem(
 		iam.idb,
 		model.ITEM_TYPE_OBJ,
-		s,
+		name,
 	)
 }
 
 // RemoveObject :
-// See details in iam/core/engine/objects.go
-func (iam IAM) RemoveObject(s model.Item) error {
+// See details in iam/core/engine/items.go
+func (iam IAM) RemoveObject(name string) error {
 	return engine.RemoveItem(
 		iam.idb,
 		model.ITEM_TYPE_OBJ,
-		s,
+		name,
 	)
 }
 
 // RenameObject :
-// See details in iam/core/engine/objects.go
-func (iam IAM) RenameObject(s model.Item, newName string) error {
+// See details in iam/core/engine/items.go
+func (iam IAM) RenameObject(name string, newName string) error {
 	return engine.RenameItem(
 		iam.idb,
 		model.ITEM_TYPE_OBJ,
-		s,
+		name,
 		newName,
 	)
 }
 
 // GetObject :
-// See details in iam/core/engine/objects.go
+// See details in iam/core/engine/items.go
 func (iam IAM) GetObject(name string) (model.Item, error) {
 	return engine.GetItem(
 		iam.idb,
@@ -149,32 +162,32 @@ func (iam IAM) GetObject(name string) (model.Item, error) {
 }
 
 // AddObjectLink :
-// See details in iam/core/engine/objects.go
-func (iam IAM) AddObjectLink(sParent model.Item, sChild model.Item) error {
+// See details in iam/core/engine/items.go
+func (iam IAM) AddObjectLink(nameP string, nameC string) error {
 	return engine.AddItemLink(
 		iam.idb,
 		model.ITEM_TYPE_OBJ,
-		sParent,
-		sChild,
+		nameP,
+		nameC,
 	)
 }
 
 //RemoveObjectLink :
-// See details in iam/core/engine/objects.go
-func (iam IAM) RemoveObjectLink(sParent model.Item, sChild model.Item) error {
+// See details in iam/core/engine/items.go
+func (iam IAM) RemoveObjectLink(nameP string, nameC string) error {
 	return engine.RemoveItemLink(
 		iam.idb,
 		model.ITEM_TYPE_OBJ,
-		sParent,
-		sChild,
+		nameP,
+		nameC,
 	)
 }
 
 // AddObjectArchitecture :
-// See details in iam/core/engine/objects.go
+// See details in iam/core/engine/items.go
 func (iam IAM) AddObjectArchitecture(
-	parents []model.Item,
-	childs []model.Item,
+	parents []string,
+	childs []string,
 	ignoreAlreadyExistsObject bool,
 	ignoreAlreadyExistsObjectLinks bool,
 ) error {
@@ -189,38 +202,38 @@ func (iam IAM) AddObjectArchitecture(
 }
 
 // AddDomain :
-// See details in iam/core/engine/objects.go
-func (iam IAM) AddDomain(s model.Item) error {
+// See details in iam/core/engine/items.go
+func (iam IAM) AddDomain(name string) error {
 	return engine.AddItem(
 		iam.idb,
 		model.ITEM_TYPE_DOMAIN,
-		s,
+		name,
 	)
 }
 
 // RemoveDomain :
-// See details in iam/core/engine/objects.go
-func (iam IAM) RemoveDomain(s model.Item) error {
+// See details in iam/core/engine/items.go
+func (iam IAM) RemoveDomain(name string) error {
 	return engine.RemoveItem(
 		iam.idb,
 		model.ITEM_TYPE_DOMAIN,
-		s,
+		name,
 	)
 }
 
 // RenameDomain :
-// See details in iam/core/engine/objects.go
-func (iam IAM) RenameDomain(s model.Item, newName string) error {
+// See details in iam/core/engine/items.go
+func (iam IAM) RenameDomain(name string, newName string) error {
 	return engine.RenameItem(
 		iam.idb,
 		model.ITEM_TYPE_DOMAIN,
-		s,
+		name,
 		newName,
 	)
 }
 
 // GetDomain :
-// See details in iam/core/engine/objects.go
+// See details in iam/core/engine/items.go
 func (iam IAM) GetDomain(name string) (model.Item, error) {
 	return engine.GetItem(
 		iam.idb,
@@ -230,32 +243,32 @@ func (iam IAM) GetDomain(name string) (model.Item, error) {
 }
 
 // AddDomainLink :
-// See details in iam/core/engine/objects.go
-func (iam IAM) AddDomainLink(sParent model.Item, sChild model.Item) error {
+// See details in iam/core/engine/items.go
+func (iam IAM) AddDomainLink(nameP string, nameC string) error {
 	return engine.AddItemLink(
 		iam.idb,
 		model.ITEM_TYPE_DOMAIN,
-		sParent,
-		sChild,
+		nameP,
+		nameC,
 	)
 }
 
 // RemoveDomainLink :
-// See details in iam/core/engine/objects.go
-func (iam IAM) RemoveDomainLink(sParent model.Item, sChild model.Item) error {
+// See details in iam/core/engine/items.go
+func (iam IAM) RemoveDomainLink(nameP string, nameC string) error {
 	return engine.RemoveItemLink(
 		iam.idb,
 		model.ITEM_TYPE_DOMAIN,
-		sParent,
-		sChild,
+		nameP,
+		nameC,
 	)
 }
 
 // AddDomainArchitecture :
-// See details in iam/core/engine/objects.go
+// See details in iam/core/engine/items.go
 func (iam IAM) AddDomainArchitecture(
-	parents []model.Item,
-	childs []model.Item,
+	parents []string,
+	childs []string,
 	ignoreAlreadyExistsObject bool,
 	ignoreAlreadyExistsObjectLinks bool,
 ) error {
@@ -266,5 +279,69 @@ func (iam IAM) AddDomainArchitecture(
 		childs,
 		ignoreAlreadyExistsObject,
 		ignoreAlreadyExistsObjectLinks,
+	)
+}
+
+//AddAssignation :
+// See details in iam/core/engine/assignations.go
+func (iam IAM) AddAssignation(
+	roleName string,
+	subjName string,
+	domainName string,
+) error {
+	return engine.AddAssignation(
+		iam.idb,
+		roleName,
+		subjName,
+		domainName,
+	)
+}
+
+//RemoveAssignation :
+// See details in iam/core/engine/assignations.go
+func (iam IAM) RemoveAssignation(
+	roleName string,
+	subjName string,
+	domainName string,
+) error {
+	return engine.RemoveAssignation(
+		iam.idb,
+		roleName,
+		subjName,
+		domainName,
+	)
+}
+
+//AddPermission :
+// See details in iam/core/engine/permissions.go
+func (iam IAM) AddPermission(
+	roleName string,
+	domainName string,
+	objName string,
+	act constant.Action,
+) error {
+	return engine.AddPermission(
+		iam.idb,
+		roleName,
+		domainName,
+		objName,
+		act,
+	)
+}
+
+//RemovePermission :
+// See details in iam/core/engine/permissions.go
+func (iam IAM) RemovePermission(
+	roleName string,
+	domainName string,
+	objName string,
+	act constant.Action,
+) error {
+	return engine.RemovePermission(
+		iam.idb,
+		roleName,
+		domainName,
+		objName,
+		act,
 	)
 }

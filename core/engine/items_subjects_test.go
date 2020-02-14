@@ -1,7 +1,6 @@
 package engine_test
 
 import (
-	"iam/core/model"
 	"testing"
 )
 
@@ -13,9 +12,7 @@ func TestGetSubjectUnknown(t *testing.T) {
 }
 
 func TestAddSubject(t *testing.T) {
-	bobby, _ := model.NewSubject("bobby")
-
-	err := iam.AddSubject(*bobby)
+	err := iam.AddSubject("bobby")
 
 	if err != nil {
 		t.Errorf("add should work : %s", err.Error())
@@ -30,29 +27,21 @@ func TestAddSubject(t *testing.T) {
 		t.Errorf("name is not the same")
 	}
 
-	emptySubj := new(model.Item)
-	emptySubj.Type = model.ITEM_TYPE_SUBJ
-	emptySubj.Name = ""
-
-	err = iam.AddSubject(*emptySubj)
+	err = iam.AddSubject("")
 
 	if err == nil {
 		t.Errorf("should not add an empty subject")
 	}
 
-	err = iam.AddSubject(*bobby)
+	err = iam.AddSubject("bobby")
 
 	if err == nil {
 		t.Errorf("should not add a subject that's already exists")
 	}
 
-	alice, _ := model.NewSubject("alice")
-	carole, _ := model.NewSubject("carole")
-	david, _ := model.NewSubject("david")
-
-	_ = iam.AddSubject(*alice)
-	_ = iam.AddSubject(*carole)
-	_ = iam.AddSubject(*david)
+	_ = iam.AddSubject("alice")
+	_ = iam.AddSubject("carole")
+	_ = iam.AddSubject("david")
 
 	subj, err = iam.GetSubject("alice")
 	if err != nil {
@@ -65,33 +54,26 @@ func TestAddSubject(t *testing.T) {
 }
 
 func TestRemoveSubject(t *testing.T) {
-	elodie, _ := model.NewSubject("elodie")
-	engie, _ := model.NewSubject("engie")
+	_ = iam.AddSubject("elodie")
 
-	_ = iam.AddSubject(*elodie)
-
-	err := iam.RemoveSubject(*elodie)
+	err := iam.RemoveSubject("elodie")
 	if err != nil {
 		t.Errorf("remove should work : %s", err.Error())
 	}
 
-	err = iam.RemoveSubject(*engie)
+	err = iam.RemoveSubject("engie")
 	if err == nil {
 		t.Errorf("remove should failed, engie is not in iam")
 	}
 }
 
 func TestRenameSubject(t *testing.T) {
-	fan, _ := model.NewSubject("fan")
-	gwen, _ := model.NewSubject("gwen")
-	folie, _ := model.NewSubject("folie")
-
-	_ = iam.AddSubject(*fan)
-	_ = iam.AddSubject(*gwen)
+	_ = iam.AddSubject("fan")
+	_ = iam.AddSubject("gwen")
 
 	fanFromDB1, _ := iam.GetSubject("fan")
 
-	err := iam.RenameSubject(*fan, "new fan")
+	err := iam.RenameSubject("fan", "new fan")
 
 	if err != nil {
 		t.Errorf("rename should work : %s", err.Error())
@@ -103,13 +85,13 @@ func TestRenameSubject(t *testing.T) {
 		t.Errorf("rename should not change IDs")
 	}
 
-	err = iam.RenameSubject(*folie, "try try")
+	err = iam.RenameSubject("folie", "try try")
 
 	if err == nil {
 		t.Errorf("rename non existing subject should have failed")
 	}
 
-	err = iam.RenameSubject(*gwen, "")
+	err = iam.RenameSubject("gwen", "")
 
 	if err == nil {
 		t.Errorf("rename should have failed cause new name is empty")
@@ -117,26 +99,22 @@ func TestRenameSubject(t *testing.T) {
 }
 
 func TestAddSubjectLink(t *testing.T) {
-	helene, _ := model.NewSubject("hélene")
-	ismail, _ := model.NewSubject("ismail")
-	joseph, _ := model.NewSubject("joseph")
+	_ = iam.AddSubject("helene")
+	_ = iam.AddSubject("ismail")
 
-	_ = iam.AddSubject(*helene)
-	_ = iam.AddSubject(*ismail)
-
-	err := iam.AddSubjectLink(*helene, *ismail)
+	err := iam.AddSubjectLink("helene", "ismail")
 
 	if err != nil {
 		t.Errorf("add subject link should work : %s", err.Error())
 	}
 
-	err = iam.AddSubjectLink(*ismail, *joseph)
+	err = iam.AddSubjectLink("ismail", "joseph")
 
 	if err == nil {
 		t.Errorf("add subject link shouldn't work cause joseph not in iam")
 	}
 
-	err = iam.AddSubjectLink(*helene, *ismail)
+	err = iam.AddSubjectLink("helene", "ismail")
 
 	if err == nil {
 		t.Errorf("add subject link shouldn't work cause subject link already exist")
@@ -144,22 +122,18 @@ func TestAddSubjectLink(t *testing.T) {
 }
 
 func TestRemoveSubjectLink(t *testing.T) {
-	kevin, _ := model.NewSubject("kevin")
-	laure, _ := model.NewSubject("laure")
-	maude, _ := model.NewSubject("maude")
+	_ = iam.AddSubject("kevin")
+	_ = iam.AddSubject("laure")
 
-	_ = iam.AddSubject(*kevin)
-	_ = iam.AddSubject(*laure)
+	_ = iam.AddSubjectLink("kevin", "laure")
 
-	_ = iam.AddSubjectLink(*kevin, *laure)
-
-	err := iam.RemoveSubjectLink(*kevin, *laure)
+	err := iam.RemoveSubjectLink("kevin", "laure")
 
 	if err != nil {
 		t.Errorf("remove subject link should have worked")
 	}
 
-	err = iam.RemoveSubjectLink(*laure, *maude)
+	err = iam.RemoveSubjectLink("laure", "maude")
 
 	if err == nil {
 		t.Errorf("remove subject link should have failed cause it doesn't exist")

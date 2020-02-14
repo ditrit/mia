@@ -27,38 +27,49 @@ type Item struct {
 	Name string
 }
 
-//NewSubject :
+//NewItem :
 // Constructor
-func NewSubject(name string) (*Item, error) {
-	switch {
-	case len(name) > constant.NAME_MAX_LEN:
-		return nil, errors.New("the name cannot be longer that 255 characters")
-	case len(name) == 0:
-		return nil, errors.New("the name cannot be empty")
+func NewItem(iType ItemType, name string) (*Item, error) {
+	if err := IsNameValidForItem(name); err != nil {
+		return nil, err
 	}
 
 	res := new(Item)
-	res.Type = ITEM_TYPE_SUBJ
+	res.Type = iType
 	res.Name = name
 
 	return res, nil
 }
 
+//IsNameValidForItem :
+// Is name valid for item
+func IsNameValidForItem(name string) error {
+	switch {
+	case len(name) > constant.NAME_MAX_LEN:
+		return errors.New("the name cannot be longer that 255 characters")
+	case len(name) == 0:
+		return errors.New("the name cannot be empty")
+	}
+
+	return nil
+}
+
+//NewSubject :
+// Constructor
+func NewSubject(name string) (*Item, error) {
+	return NewItem(ITEM_TYPE_SUBJ, name)
+}
+
+//NewObject :
+// Constructor
+func NewObject(name string) (*Item, error) {
+	return NewItem(ITEM_TYPE_OBJ, name)
+}
+
 //NewDomain :
 // Constructor
 func NewDomain(name string) (*Item, error) {
-	switch {
-	case len(name) > constant.NAME_MAX_LEN:
-		return nil, errors.New("the name cannot be longer that 255 characters")
-	case len(name) == 0:
-		return nil, errors.New("the name cannot be empty")
-	}
-
-	res := new(Item)
-	res.Type = ITEM_TYPE_DOMAIN
-	res.Name = name
-
-	return res, nil
+	return NewItem(ITEM_TYPE_DOMAIN, name)
 }
 
 //GetRootDomain :
@@ -70,21 +81,4 @@ func GetRootDomain() *Item {
 	res.Name = ""
 
 	return res
-}
-
-//NewObject :
-// Constructor
-func NewObject(name string) (*Item, error) {
-	switch {
-	case len(name) > constant.NAME_MAX_LEN:
-		return nil, errors.New("the name cannot be longer that 255 characters")
-	case len(name) == 0:
-		return nil, errors.New("the name cannot be empty")
-	}
-
-	res := new(Item)
-	res.Type = ITEM_TYPE_OBJ
-	res.Name = name
-
-	return res, nil
 }

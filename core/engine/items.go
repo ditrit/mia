@@ -43,6 +43,7 @@ func askDBForItems(
 	return fIfFound(res, queryItem)
 }
 
+// use this function to have the benefit of abstraction and closures
 func askDBForItemLinks(
 	idb database.IAMDatabase,
 	parentName string,
@@ -105,33 +106,6 @@ func askDBForItemLinks(
 	return fIfFound(res, sLink)
 }
 
-func checkIfItemsAreConsistents(iType model.ItemType, items ...model.Item) error {
-	if len(items) == 0 {
-		return nil
-	}
-
-	checkIfKnown := func(item model.Item) bool {
-		switch item.Type {
-		case model.ITEM_TYPE_SUBJ, model.ITEM_TYPE_DOMAIN, model.ITEM_TYPE_OBJ:
-			return true
-		}
-
-		return false
-	}
-
-	for i := range items {
-		if !checkIfKnown(items[i]) {
-			return errors.New("unknown type")
-		}
-
-		if iType != items[i].Type {
-			return errors.New("type must be the same for all items")
-		}
-	}
-
-	return nil
-}
-
 // AddItem :
 // add item in the IAM
 // returns an error if :
@@ -140,19 +114,21 @@ func checkIfItemsAreConsistents(iType model.ItemType, items ...model.Item) error
 func AddItem(
 	idb database.IAMDatabase,
 	iType model.ItemType,
-	s model.Item,
+	name string,
 ) error {
-	if err := checkIfItemsAreConsistents(iType, s); err != nil {
+	subj, err := model.NewItem(iType, name)
+
+	if err != nil {
 		return err
 	}
 
-	_, err := askDBForItems(idb, s.Name, s.Type, true,
+	_, err = askDBForItems(idb, name, iType, true,
 		func(_ *gorm.DB, qs model.Item) (model.Item, error) {
 			return qs, errors.New("the item already exists in the iam")
 		},
 		func(db *gorm.DB, qs model.Item) (model.Item, error) {
 			db.Error = nil
-			res := db.Create(&s)
+			res := db.Create(subj)
 			return qs, res.Error
 		})
 
@@ -163,19 +139,22 @@ func AddItem(
 // remove item in the IAM
 // returns an error if :
 //	- the item does not exist in the iam
-//	- the item is a parent or a child in ItemLinks
+//	- the item is a parent or a child in ItemLinks TODO
+//	- the item is present in an assignation or a permission TODO
 func RemoveItem(
 	idb database.IAMDatabase,
 	iType model.ItemType,
-	s model.Item,
+	name string,
 ) error {
-	if err := checkIfItemsAreConsistents(iType, s); err != nil {
+	subj, err := model.NewItem(iType, name)
+
+	if err != nil {
 		return err
 	}
 
-	_, err := askDBForItems(idb, s.Name, s.Type, true,
+	_, err = askDBForItems(idb, name, iType, true,
 		func(db *gorm.DB, qs model.Item) (model.Item, error) {
-			res := db.Delete(&s)
+			res := db.Delete(&subj)
 			return qs, res.Error
 		},
 		func(db *gorm.DB, qs model.Item) (model.Item, error) {
@@ -193,20 +172,20 @@ func RemoveItem(
 func RenameItem(
 	idb database.IAMDatabase,
 	iType model.ItemType,
-	s model.Item,
+	name string,
 	newName string,
 ) error {
-	if err := checkIfItemsAreConsistents(iType, s); err != nil {
+	subj, err := model.NewItem(iType, name)
+
+	if err != nil {
+		return err
+	} else if err = model.IsNameValidForItem(newName); err != nil {
 		return err
 	}
 
-	if newName == "" {
-		return errors.New("the new name cannot be empty")
-	}
-
-	_, err := askDBForItems(idb, s.Name, s.Type, true,
+	_, err = askDBForItems(idb, name, iType, true,
 		func(db *gorm.DB, qs model.Item) (model.Item, error) {
-			res := db.Model(&s).Update("name", newName)
+			res := db.Model(&subj).Update("name", newName)
 			return qs, res.Error
 		},
 		func(db *gorm.DB, qs model.Item) (model.Item, error) {
@@ -242,14 +221,10 @@ func GetItem(
 func AddItemLink(
 	idb database.IAMDatabase,
 	iType model.ItemType,
-	sParent model.Item,
-	sChild model.Item,
+	nameParent string,
+	nameChild string,
 ) error {
-	if err := checkIfItemsAreConsistents(iType, sParent, sChild); err != nil {
-		return err
-	}
-
-	return askDBForItemLinks(idb, sParent.Name, sChild.Name, sParent.Type, true,
+	return askDBForItemLinks(idb, nameParent, nameChild, iType, true,
 		func(db *gorm.DB, qs model.ItemLink) error {
 			return errors.New("the connection link already exists")
 		},
@@ -268,14 +243,10 @@ func AddItemLink(
 func RemoveItemLink(
 	idb database.IAMDatabase,
 	iType model.ItemType,
-	sParent model.Item,
-	sChild model.Item,
+	nameParent string,
+	nameChild string,
 ) error {
-	if err := checkIfItemsAreConsistents(iType, sParent, sChild); err != nil {
-		return err
-	}
-
-	return askDBForItemLinks(idb, sParent.Name, sChild.Name, sParent.Type, true,
+	return askDBForItemLinks(idb, nameParent, nameChild, iType, true,
 		func(db *gorm.DB, qs model.ItemLink) error {
 			res := db.Delete(&qs)
 			return res.Error
@@ -297,8 +268,8 @@ func RemoveItemLink(
 func AddItemArchitecture(
 	idb database.IAMDatabase,
 	iType model.ItemType,
-	parents []model.Item,
-	childs []model.Item,
+	parents []string,
+	childs []string,
 	ignoreAlreadyExistsItem bool,
 	ignoreAlreadyExistsLinks bool,
 ) error {

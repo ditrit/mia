@@ -1,9 +1,16 @@
 ToDo List iam:
-	☐ Implémenter le model
-	☐ Décrire l'interface
+	✔ Designer le modèle @done(20-02-14 17:50)
+	✔ Implémenter le modèle @done(20-02-14 17:50)
+	☐ Tester le modèle
+	✔ Décrire l'interface @done(20-02-14 17:50)
 	☐ Implémenter l'interface
 	☐ Tester l'interface
 	☐ Faire la fonction Enforce
 
 ToDo Boring:
+	☐ Faire tous les todos in the code
 	☐ Vérifier si à l'ajout d'une arête on reste sur un DAG
+	☐ Vérifier que si un item est enlevé, ça casse pas des liens
+	☐ Si un domain est rajouté, vérifier de le rajouter au domain principal
+	☐ Demander l'ensemble de l'architecture
+	☐ faire un affichage dot graphfiz

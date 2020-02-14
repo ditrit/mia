@@ -19,6 +19,8 @@ type Role struct {
 func NewRole(name string) (*Role, error) {
 	if len(name) > constant.NAME_MAX_LEN {
 		return nil, errors.New("the name cannot be longer that 255 characters")
+	} else if len(name) == 0 {
+		return nil, errors.New("the name cannot be empty")
 	}
 
 	res := new(Role)
@@ -26,5 +28,3 @@ func NewRole(name string) (*Role, error) {
 
 	return res, nil
 }
-
-//TODO : find a way to create safely the empty role common of everyone
