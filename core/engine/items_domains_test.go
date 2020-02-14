@@ -12,6 +12,7 @@ func TestGetDomainUnknown(t *testing.T) {
 	}
 }
 
+//nolint: goconst
 func TestAddDomain(t *testing.T) {
 	bobby, _ := model.NewDomain("bobby")
 

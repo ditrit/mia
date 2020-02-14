@@ -50,6 +50,15 @@ issues:
   exclude-use-default: false
   exclude-rules:
 
+    - linters: dupl
+      path: core/engine/items_domains_test.go
+
+    - linters: dupl
+      path: core/engine/items_subjects_test.go
+
+    - linters: dupl
+      path: core/engine/items_objects_test.go
+
     # Don't change it
     # ignore name convention from golint
     - linters:

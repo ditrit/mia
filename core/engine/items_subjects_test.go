@@ -43,7 +43,7 @@ func TestAddSubject(t *testing.T) {
 	err = iam.AddSubject(*bobby)
 
 	if err == nil {
-		t.Errorf("should not add a subject that's already existe")
+		t.Errorf("should not add a subject that's already exists")
 	}
 
 	alice, _ := model.NewSubject("alice")
