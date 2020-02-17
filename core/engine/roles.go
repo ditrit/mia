@@ -28,7 +28,7 @@ func askDBForRoles(
 	res := idb.DB().Where("name = ?", name).Take(&role)
 
 	if res.Error != nil && !res.RecordNotFound() {
-		return errors.New("unknown error occured")
+		return errors.New("unknown error occurred")
 	}
 
 	if res.RecordNotFound() {

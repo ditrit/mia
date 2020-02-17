@@ -11,25 +11,30 @@ func searchRole(roles []model.Role, name string) bool {
 			return true
 		}
 	}
+
 	return false
 }
 
 func areModelsEquals(roles1 []model.Role, roles2 []model.Role) bool {
 	for _, elem1 := range roles1 {
 		found := false
+
 		for _, elem2 := range roles2 {
 			if elem1 == elem2 {
 				found = true
 				break
 			}
 		}
+
 		if !found {
 			return false
 		}
 	}
+
 	return true
 }
 
+//nolint: gocyclo
 func TestRole(t *testing.T) {
 	const (
 		nameRole = "ProductTester"
@@ -49,6 +54,7 @@ func TestRole(t *testing.T) {
 	if err != nil {
 		t.Errorf("should never happened")
 	}
+
 	if searchRole(beforeRoles, nameRole) {
 		t.Errorf("this role shouldn't be in the iam")
 	}
@@ -64,6 +70,7 @@ func TestRole(t *testing.T) {
 	if err != nil {
 		t.Errorf("should have worked")
 	}
+
 	if !searchRole(roles, nameRole) {
 		t.Errorf("this role should be in the iam")
 	}
@@ -79,6 +86,7 @@ func TestRole(t *testing.T) {
 	if err != nil {
 		t.Errorf("should have worked")
 	}
+
 	if searchRole(afterRoles, nameRole) {
 		t.Errorf("this role shouldn't be in the iam")
 	}
