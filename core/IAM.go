@@ -3,7 +3,6 @@
 package core
 
 import (
-	"errors"
 	"iam/core/constant"
 	"iam/core/database"
 	"iam/core/engine"
@@ -391,6 +390,11 @@ func (iam IAM) Enforce(
 	objectName string,
 	action constant.Action,
 ) (constant.Effect, error) {
-	//TODO
-	return constant.ACTION_DENY, errors.New("not implemented")
+	return engine.Enforce(
+		iam.idb,
+		subjectName,
+		domainName,
+		objectName,
+		action,
+	)
 }

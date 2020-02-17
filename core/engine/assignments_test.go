@@ -28,6 +28,12 @@ func TestAssignment(t *testing.T) {
 		t.Errorf("should have added the assignment")
 	}
 
+	err = iam.AddAssignment(roleName, subjName, domainName)
+
+	if err == nil {
+		t.Errorf("should have failed cause it's already exists")
+	}
+
 	err = iam.RemoveAssignment(roleName, subjName, domainName)
 
 	if err != nil {

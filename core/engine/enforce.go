@@ -19,5 +19,5 @@ func Enforce(
 	action constant.Action,
 ) (constant.Effect, error) {
 	//TODO
-	return constant.ACTION_DENY, errors.New("not implemented")
+	return constant.EFFECT_DENY, errors.New("not implemented")
 }
