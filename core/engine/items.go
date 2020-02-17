@@ -113,22 +113,23 @@ func askDBForItemLinks(
 //	- the item has an empty name
 func AddItem(
 	idb database.IAMDatabase,
+	haveToOpenConnection bool,
 	iType model.ItemType,
 	name string,
 ) error {
-	subj, err := model.NewItem(iType, name)
+	item, err := model.NewItem(iType, name)
 
 	if err != nil {
 		return err
 	}
 
-	_, err = askDBForItems(idb, name, iType, true,
+	_, err = askDBForItems(idb, name, iType, haveToOpenConnection,
 		func(_ *gorm.DB, qs model.Item) (model.Item, error) {
 			return qs, errors.New("the item already exists in the iam")
 		},
 		func(db *gorm.DB, qs model.Item) (model.Item, error) {
 			db.Error = nil
-			res := db.Create(subj)
+			res := db.Create(&item)
 			return qs, res.Error
 		})
 
@@ -143,6 +144,7 @@ func AddItem(
 //	- the item is present in an assignation or a permission TODO
 func RemoveItem(
 	idb database.IAMDatabase,
+	haveToOpenConnection bool,
 	iType model.ItemType,
 	name string,
 ) error {
@@ -152,7 +154,7 @@ func RemoveItem(
 		return err
 	}
 
-	_, err = askDBForItems(idb, name, iType, true,
+	_, err = askDBForItems(idb, name, iType, haveToOpenConnection,
 		func(db *gorm.DB, qs model.Item) (model.Item, error) {
 			res := db.Delete(&subj)
 			return qs, res.Error
@@ -171,6 +173,7 @@ func RemoveItem(
 //	- the new name given is empty
 func RenameItem(
 	idb database.IAMDatabase,
+	haveToOpenConnection bool,
 	iType model.ItemType,
 	name string,
 	newName string,
@@ -183,7 +186,7 @@ func RenameItem(
 		return err
 	}
 
-	_, err = askDBForItems(idb, name, iType, true,
+	_, err = askDBForItems(idb, name, iType, haveToOpenConnection,
 		func(db *gorm.DB, qs model.Item) (model.Item, error) {
 			res := db.Model(&subj).Update("name", newName)
 			return qs, res.Error
@@ -195,26 +198,6 @@ func RenameItem(
 	return err
 }
 
-// GetItem :
-// get item in the IAM
-// returns an error if :
-//	- the item does not exist in the iam
-func GetItem(
-	idb database.IAMDatabase,
-	iType model.ItemType,
-	name string,
-) (model.Item, error) {
-	return askDBForItems(idb, name, iType, true,
-		func(db *gorm.DB, qs model.Item) (model.Item, error) {
-			return qs, db.Error
-		},
-		func(db *gorm.DB, qs model.Item) (model.Item, error) {
-			return qs, errors.New("the item does not exist in the iam")
-		})
-}
-
-// TODO : get all items
-
 // AddItemLink :
 // add a relation between two items in the IAM
 // returns an error if :
@@ -222,11 +205,12 @@ func GetItem(
 //	- the link already exists
 func AddItemLink(
 	idb database.IAMDatabase,
+	haveToOpenConnection bool,
 	iType model.ItemType,
 	nameParent string,
 	nameChild string,
 ) error {
-	return askDBForItemLinks(idb, nameParent, nameChild, iType, true,
+	return askDBForItemLinks(idb, nameParent, nameChild, iType, haveToOpenConnection,
 		func(db *gorm.DB, qs model.ItemLink) error {
 			return errors.New("the connection link already exists")
 		},
@@ -244,11 +228,12 @@ func AddItemLink(
 //	- the link does not exist
 func RemoveItemLink(
 	idb database.IAMDatabase,
+	haveToOpenConnection bool,
 	iType model.ItemType,
 	nameParent string,
 	nameChild string,
 ) error {
-	return askDBForItemLinks(idb, nameParent, nameChild, iType, true,
+	return askDBForItemLinks(idb, nameParent, nameChild, iType, haveToOpenConnection,
 		func(db *gorm.DB, qs model.ItemLink) error {
 			res := db.Delete(&qs)
 			return res.Error
@@ -259,6 +244,80 @@ func RemoveItemLink(
 	)
 }
 
+// GetItem :
+// get item in the IAM
+// returns an error if :
+//	- the item does not exist in the iam
+func GetItem(
+	idb database.IAMDatabase,
+	haveToOpenConnection bool,
+	iType model.ItemType,
+	name string,
+) (model.Item, error) {
+	return askDBForItems(idb, name, iType, haveToOpenConnection,
+		func(db *gorm.DB, qs model.Item) (model.Item, error) {
+			return qs, db.Error
+		},
+		func(db *gorm.DB, qs model.Item) (model.Item, error) {
+			return qs, errors.New("the item does not exist in the iam")
+		})
+}
+
+// GetItemArchitecture :
+// returns the whole architecture of a spectific type
+// returns 3 arguments:
+//	- []string, list of vertices
+//	- map[string][]string, list of edges, the key is the child, and the list are the list of parents
+//	- error, error if any
+// TODO test it
+func GetItemArchitecture(
+	idb database.IAMDatabase,
+	haveToOpenConnection bool,
+	iType model.ItemType,
+) ([]string, map[string][]string, error) {
+	var (
+		items     []model.Item
+		itemLinks []model.ItemLink
+	)
+
+	if haveToOpenConnection {
+		idb.OpenConnection()
+		defer idb.CloseConnection() //nolint: errcheck
+	}
+
+	db := idb.DB().Where("type = ?", iType).Find(&items)
+
+	if db.Error != nil {
+		return []string{}, map[string][]string{}, nil
+	}
+
+	db2 := idb.DB().Where("type = ?", iType).Find(&itemLinks)
+
+	if db2.Error != nil {
+		return []string{}, map[string][]string{}, nil
+	}
+
+	res := make([]string, len(items))
+	parentTable := make(map[string][]string)
+	assocTable := make(map[uint64]string)
+
+	for i := range items {
+		role := &items[i]
+		res[i] = role.Name
+		assocTable[role.ID] = role.Name
+	}
+
+	for _, link := range itemLinks {
+		childName := assocTable[link.IDChild]
+		parentName := assocTable[link.IDParent]
+
+		parentTable[childName] = append(parentTable[childName], parentName)
+	}
+
+	return res, parentTable, db.Error
+}
+
+// TODO implement a function that add a whole architecture
 // AddItemArchitecture :
 // add an architecture to the IAM
 // returns an error if :
@@ -267,14 +326,15 @@ func RemoveItemLink(
 //	- one of the items has an empty name
 //	- one of the links alrady exists
 // We can ignore some of this error with the other parameters
-func AddItemArchitecture(
-	idb database.IAMDatabase,
-	iType model.ItemType,
-	parents []string,
-	childs []string,
-	ignoreAlreadyExistsItem bool,
-	ignoreAlreadyExistsLinks bool,
-) error {
-	// TODO: implement + test
-	return nil
-}
+// func AddItemArchitecture(
+// 	idb database.IAMDatabase,
+// 	haveToOpenConnection bool,
+// 	iType model.ItemType,
+// 	parents []string,
+// 	childs []string,
+// 	ignoreAlreadyExistsItem bool,
+// 	ignoreAlreadyExistsLinks bool,
+// ) error {
+// 	// TODO: implement + test
+// 	return nil
+// }

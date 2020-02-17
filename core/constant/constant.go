@@ -13,6 +13,15 @@ type Action int
 
 //nolint: golint, stylecheck
 const (
-	ACTION_ALLOW Action = iota
+	Execute Action = iota
+)
+
+//Effect :
+//Enum declaration
+type Effect int
+
+//nolint: golint, stylecheck
+const (
+	ACTION_ALLOW Effect = iota
 	ACTION_DENY
 )

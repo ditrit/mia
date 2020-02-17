@@ -3,6 +3,7 @@
 package core
 
 import (
+	"errors"
 	"iam/core/constant"
 	"iam/core/database"
 	"iam/core/engine"
@@ -38,19 +39,31 @@ func NewIAM(p string, dropTables bool) IAM {
 // AddRole :
 // See details in iam/core/engine/roles.go
 func (iam IAM) AddRole(name string) error {
-	return engine.AddRole(iam.idb, name)
+	return engine.AddRole(iam.idb, true, name)
 }
 
 // RemoveRole :
 // See details in iam/core/engine/roles.go
 func (iam IAM) RemoveRole(name string) error {
-	return engine.RemoveRole(iam.idb, name)
+	return engine.RemoveRole(iam.idb, true, name)
+}
+
+// GetRole :
+// See details in iam/core/engine/roles.go
+func (iam IAM) GetRole(name string) (model.Role, error) {
+	return engine.GetRole(iam.idb, true, name)
+}
+
+// IsRoleExists :
+// See details in iam/core/engine/roles.go
+func (iam IAM) IsRoleExists(name string) (bool, error) {
+	return engine.IsRoleExists(iam.idb, true, name)
 }
 
 // GetAllRoles :
 // See details in iam/core/engine/roles.go
-func (iam IAM) GetAllRoles() ([]model.Role, error) {
-	return engine.GetAllRoles(iam.idb)
+func (iam IAM) GetAllRoles() ([]string, error) {
+	return engine.GetAllRoles(iam.idb, true)
 }
 
 //	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//
@@ -62,6 +75,7 @@ func (iam IAM) GetAllRoles() ([]model.Role, error) {
 func (iam IAM) AddSubject(name string) error {
 	return engine.AddItem(
 		iam.idb,
+		true,
 		model.ITEM_TYPE_SUBJ,
 		name,
 	)
@@ -72,6 +86,7 @@ func (iam IAM) AddSubject(name string) error {
 func (iam IAM) RemoveSubject(name string) error {
 	return engine.RemoveItem(
 		iam.idb,
+		true,
 		model.ITEM_TYPE_SUBJ,
 		name,
 	)
@@ -82,6 +97,7 @@ func (iam IAM) RemoveSubject(name string) error {
 func (iam IAM) RenameSubject(name string, newName string) error {
 	return engine.RenameItem(
 		iam.idb,
+		true,
 		model.ITEM_TYPE_SUBJ,
 		name,
 		newName,
@@ -93,6 +109,7 @@ func (iam IAM) RenameSubject(name string, newName string) error {
 func (iam IAM) GetSubject(name string) (model.Item, error) {
 	return engine.GetItem(
 		iam.idb,
+		true,
 		model.ITEM_TYPE_SUBJ,
 		name,
 	)
@@ -103,6 +120,7 @@ func (iam IAM) GetSubject(name string) (model.Item, error) {
 func (iam IAM) AddSubjectLink(nP string, nC string) error {
 	return engine.AddItemLink(
 		iam.idb,
+		true,
 		model.ITEM_TYPE_SUBJ,
 		nP,
 		nC,
@@ -114,28 +132,17 @@ func (iam IAM) AddSubjectLink(nP string, nC string) error {
 func (iam IAM) RemoveSubjectLink(nP string, nC string) error {
 	return engine.RemoveItemLink(
 		iam.idb,
+		true,
 		model.ITEM_TYPE_SUBJ,
 		nP,
 		nC,
 	)
 }
 
-// AddSubjectArchitecture :
+// GetSubjectArchitecture :
 // See details in iam/core/engine/items.go
-func (iam IAM) AddSubjectArchitecture(
-	parents []string,
-	childs []string,
-	ignoreAlreadyExistsSubject bool,
-	ignoreAlreadyExistsSubjectLinks bool,
-) error {
-	return engine.AddItemArchitecture(
-		iam.idb,
-		model.ITEM_TYPE_SUBJ,
-		parents,
-		childs,
-		ignoreAlreadyExistsSubject,
-		ignoreAlreadyExistsSubjectLinks,
-	)
+func (iam IAM) GetSubjectArchitecture() ([]string, map[string][]string, error) {
+	return engine.GetItemArchitecture(iam.idb, true, model.ITEM_TYPE_SUBJ)
 }
 
 //	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//
@@ -147,6 +154,7 @@ func (iam IAM) AddSubjectArchitecture(
 func (iam IAM) AddObject(name string) error {
 	return engine.AddItem(
 		iam.idb,
+		true,
 		model.ITEM_TYPE_OBJ,
 		name,
 	)
@@ -157,6 +165,7 @@ func (iam IAM) AddObject(name string) error {
 func (iam IAM) RemoveObject(name string) error {
 	return engine.RemoveItem(
 		iam.idb,
+		true,
 		model.ITEM_TYPE_OBJ,
 		name,
 	)
@@ -167,6 +176,7 @@ func (iam IAM) RemoveObject(name string) error {
 func (iam IAM) RenameObject(name string, newName string) error {
 	return engine.RenameItem(
 		iam.idb,
+		true,
 		model.ITEM_TYPE_OBJ,
 		name,
 		newName,
@@ -178,6 +188,7 @@ func (iam IAM) RenameObject(name string, newName string) error {
 func (iam IAM) GetObject(name string) (model.Item, error) {
 	return engine.GetItem(
 		iam.idb,
+		true,
 		model.ITEM_TYPE_OBJ,
 		name,
 	)
@@ -188,6 +199,7 @@ func (iam IAM) GetObject(name string) (model.Item, error) {
 func (iam IAM) AddObjectLink(nameP string, nameC string) error {
 	return engine.AddItemLink(
 		iam.idb,
+		true,
 		model.ITEM_TYPE_OBJ,
 		nameP,
 		nameC,
@@ -199,28 +211,17 @@ func (iam IAM) AddObjectLink(nameP string, nameC string) error {
 func (iam IAM) RemoveObjectLink(nameP string, nameC string) error {
 	return engine.RemoveItemLink(
 		iam.idb,
+		true,
 		model.ITEM_TYPE_OBJ,
 		nameP,
 		nameC,
 	)
 }
 
-// AddObjectArchitecture :
+// GetObjectArchitecture :
 // See details in iam/core/engine/items.go
-func (iam IAM) AddObjectArchitecture(
-	parents []string,
-	childs []string,
-	ignoreAlreadyExistsObject bool,
-	ignoreAlreadyExistsObjectLinks bool,
-) error {
-	return engine.AddItemArchitecture(
-		iam.idb,
-		model.ITEM_TYPE_OBJ,
-		parents,
-		childs,
-		ignoreAlreadyExistsObject,
-		ignoreAlreadyExistsObjectLinks,
-	)
+func (iam IAM) GetObjectArchitecture() ([]string, map[string][]string, error) {
+	return engine.GetItemArchitecture(iam.idb, true, model.ITEM_TYPE_OBJ)
 }
 
 //	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//
@@ -232,6 +233,7 @@ func (iam IAM) AddObjectArchitecture(
 func (iam IAM) AddDomain(name string) error {
 	return engine.AddItem(
 		iam.idb,
+		true,
 		model.ITEM_TYPE_DOMAIN,
 		name,
 	)
@@ -242,6 +244,7 @@ func (iam IAM) AddDomain(name string) error {
 func (iam IAM) RemoveDomain(name string) error {
 	return engine.RemoveItem(
 		iam.idb,
+		true,
 		model.ITEM_TYPE_DOMAIN,
 		name,
 	)
@@ -252,6 +255,7 @@ func (iam IAM) RemoveDomain(name string) error {
 func (iam IAM) RenameDomain(name string, newName string) error {
 	return engine.RenameItem(
 		iam.idb,
+		true,
 		model.ITEM_TYPE_DOMAIN,
 		name,
 		newName,
@@ -263,6 +267,7 @@ func (iam IAM) RenameDomain(name string, newName string) error {
 func (iam IAM) GetDomain(name string) (model.Item, error) {
 	return engine.GetItem(
 		iam.idb,
+		true,
 		model.ITEM_TYPE_DOMAIN,
 		name,
 	)
@@ -273,6 +278,7 @@ func (iam IAM) GetDomain(name string) (model.Item, error) {
 func (iam IAM) AddDomainLink(nameP string, nameC string) error {
 	return engine.AddItemLink(
 		iam.idb,
+		true,
 		model.ITEM_TYPE_DOMAIN,
 		nameP,
 		nameC,
@@ -284,58 +290,49 @@ func (iam IAM) AddDomainLink(nameP string, nameC string) error {
 func (iam IAM) RemoveDomainLink(nameP string, nameC string) error {
 	return engine.RemoveItemLink(
 		iam.idb,
+		true,
 		model.ITEM_TYPE_DOMAIN,
 		nameP,
 		nameC,
 	)
 }
 
-// AddDomainArchitecture :
+// GetDomainArchitecture :
 // See details in iam/core/engine/items.go
-func (iam IAM) AddDomainArchitecture(
-	parents []string,
-	childs []string,
-	ignoreAlreadyExistsObject bool,
-	ignoreAlreadyExistsObjectLinks bool,
-) error {
-	return engine.AddItemArchitecture(
-		iam.idb,
-		model.ITEM_TYPE_DOMAIN,
-		parents,
-		childs,
-		ignoreAlreadyExistsObject,
-		ignoreAlreadyExistsObjectLinks,
-	)
+func (iam IAM) GetDomainArchitecture() ([]string, map[string][]string, error) {
+	return engine.GetItemArchitecture(iam.idb, true, model.ITEM_TYPE_DOMAIN)
 }
 
 //	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//
-//	//							ASSIGNATIONS							//	//
+//	//								ASSIGNMENTS							//	//
 //	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//
 
-//AddAssignation :
-// See details in iam/core/engine/assignations.go
-func (iam IAM) AddAssignation(
+//AddAssignment :
+// See details in iam/core/engine/assignments.go
+func (iam IAM) AddAssignment(
 	roleName string,
 	subjName string,
 	domainName string,
 ) error {
-	return engine.AddAssignation(
+	return engine.AddAssignment(
 		iam.idb,
+		true,
 		roleName,
 		subjName,
 		domainName,
 	)
 }
 
-//RemoveAssignation :
-// See details in iam/core/engine/assignations.go
-func (iam IAM) RemoveAssignation(
+//RemoveAssignment :
+// See details in iam/core/engine/assignments.go
+func (iam IAM) RemoveAssignment(
 	roleName string,
 	subjName string,
 	domainName string,
 ) error {
-	return engine.RemoveAssignation(
+	return engine.RemoveAssignment(
 		iam.idb,
+		true,
 		roleName,
 		subjName,
 		domainName,
@@ -356,6 +353,7 @@ func (iam IAM) AddPermission(
 ) error {
 	return engine.AddPermission(
 		iam.idb,
+		true,
 		roleName,
 		domainName,
 		objName,
@@ -373,9 +371,26 @@ func (iam IAM) RemovePermission(
 ) error {
 	return engine.RemovePermission(
 		iam.idb,
+		true,
 		roleName,
 		domainName,
 		objName,
 		act,
 	)
+}
+
+//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//
+//	//							ENFORCE									//	//
+//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//
+
+//Enforce :
+// See details in iam/core/engine/enforce.go
+func (iam IAM) Enforce(
+	subjectName string,
+	domainName string,
+	objectName string,
+	action constant.Action,
+) (constant.Effect, error) {
+	//TODO
+	return constant.ACTION_DENY, errors.New("not implemented")
 }

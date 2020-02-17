@@ -15,6 +15,7 @@ import (
 //	- the permission already exists
 func AddPermission(
 	idb database.IAMDatabase,
+	haveToOpenConnection bool,
 	roleName string,
 	domainName string,
 	objName string,
@@ -30,6 +31,7 @@ func AddPermission(
 //	- the permission does not exist
 func RemovePermission(
 	idb database.IAMDatabase,
+	haveToOpenConnection bool,
 	roleName string,
 	domainName string,
 	objName string,
