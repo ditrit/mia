@@ -3,6 +3,7 @@
 package engine
 
 import (
+	"errors"
 	"iam/core/constant"
 	"iam/core/database"
 )
@@ -20,7 +21,7 @@ func AddPermission(
 	act constant.Action,
 ) error {
 	//TODO
-	return nil
+	return errors.New("not implemented")
 }
 
 //RemovePermission :
@@ -35,5 +36,5 @@ func RemovePermission(
 	act constant.Action,
 ) error {
 	//TODO
-	return nil
+	return errors.New("not implemented")
 }

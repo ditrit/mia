@@ -15,6 +15,10 @@ type IAM struct {
 	idb database.IAMDatabase
 }
 
+//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//
+//	//							INITIALIZERS							//	//
+//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//
+
 // NewIAM :
 // Constructor : Declare a IAM Object
 func NewIAM(p string, dropTables bool) IAM {
@@ -27,6 +31,10 @@ func NewIAM(p string, dropTables bool) IAM {
 	return res
 }
 
+//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//
+//	//								ROLES								//	//
+//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//
+
 // AddRole :
 // See details in iam/core/engine/roles.go
 func (iam IAM) AddRole(name string) error {
@@ -38,6 +46,16 @@ func (iam IAM) AddRole(name string) error {
 func (iam IAM) RemoveRole(name string) error {
 	return engine.RemoveRole(iam.idb, name)
 }
+
+// GetAllRoles :
+// See details in iam/core/engine/roles.go
+func (iam IAM) GetAllRoles() ([]model.Role, error) {
+	return engine.GetAllRoles(iam.idb)
+}
+
+//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//
+//	//							SUBJECTS								//	//
+//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//
 
 // AddSubject :
 // See details in iam/core/engine/items.go
@@ -120,6 +138,10 @@ func (iam IAM) AddSubjectArchitecture(
 	)
 }
 
+//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//
+//	//								OBJECTS								//	//
+//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//
+
 // AddObject :
 // See details in iam/core/engine/items.go
 func (iam IAM) AddObject(name string) error {
@@ -200,6 +222,10 @@ func (iam IAM) AddObjectArchitecture(
 		ignoreAlreadyExistsObjectLinks,
 	)
 }
+
+//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//
+//	//								DOMAINS								//	//
+//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//
 
 // AddDomain :
 // See details in iam/core/engine/items.go
@@ -282,6 +308,10 @@ func (iam IAM) AddDomainArchitecture(
 	)
 }
 
+//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//
+//	//							ASSIGNATIONS							//	//
+//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//
+
 //AddAssignation :
 // See details in iam/core/engine/assignations.go
 func (iam IAM) AddAssignation(
@@ -311,6 +341,10 @@ func (iam IAM) RemoveAssignation(
 		domainName,
 	)
 }
+
+//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//
+//	//							PERMISSIONS								//	//
+//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//
 
 //AddPermission :
 // See details in iam/core/engine/permissions.go

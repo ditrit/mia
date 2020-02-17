@@ -3,6 +3,7 @@
 package engine
 
 import (
+	"errors"
 	"iam/core/database"
 )
 
@@ -18,7 +19,7 @@ func AddAssignation(
 	domainName string,
 ) error {
 	//TODO
-	return nil
+	return errors.New("not implemented")
 }
 
 //RemoveAssignation :
@@ -32,5 +33,5 @@ func RemoveAssignation(
 	domainName string,
 ) error {
 	//TODO
-	return nil
+	return errors.New("not implemented")
 }

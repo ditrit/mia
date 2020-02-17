@@ -14,3 +14,4 @@ ToDo Boring:
 	☐ Si un domain est rajouté, vérifier de le rajouter au domain principal
 	☐ Demander l'ensemble de l'architecture
 	☐ faire un affichage dot graphfiz
+	☐ Faire une transformation pour les subjects (par name et par ID externe)

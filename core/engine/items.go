@@ -213,6 +213,8 @@ func GetItem(
 		})
 }
 
+// TODO : get all items
+
 // AddItemLink :
 // add a relation between two items in the IAM
 // returns an error if :
