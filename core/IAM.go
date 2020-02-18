@@ -141,7 +141,7 @@ func (iam IAM) RemoveSubjectLink(nP string, nC string) error {
 // GetSubjectArchitecture :
 // See details in iam/core/engine/items.go
 func (iam IAM) GetSubjectArchitecture() ([]string, map[string][]string, error) {
-	return engine.GetItemArchitecture(iam.idb, true, model.ITEM_TYPE_SUBJ)
+	return engine.GetItemArchitectureNameOnly(iam.idb, true, model.ITEM_TYPE_SUBJ)
 }
 
 //	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//
@@ -220,7 +220,7 @@ func (iam IAM) RemoveObjectLink(nameP string, nameC string) error {
 // GetObjectArchitecture :
 // See details in iam/core/engine/items.go
 func (iam IAM) GetObjectArchitecture() ([]string, map[string][]string, error) {
-	return engine.GetItemArchitecture(iam.idb, true, model.ITEM_TYPE_OBJ)
+	return engine.GetItemArchitectureNameOnly(iam.idb, true, model.ITEM_TYPE_OBJ)
 }
 
 //	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//
@@ -299,7 +299,7 @@ func (iam IAM) RemoveDomainLink(nameP string, nameC string) error {
 // GetDomainArchitecture :
 // See details in iam/core/engine/items.go
 func (iam IAM) GetDomainArchitecture() ([]string, map[string][]string, error) {
-	return engine.GetItemArchitecture(iam.idb, true, model.ITEM_TYPE_DOMAIN)
+	return engine.GetItemArchitectureNameOnly(iam.idb, true, model.ITEM_TYPE_DOMAIN)
 }
 
 //	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//

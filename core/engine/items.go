@@ -266,15 +266,15 @@ func GetItem(
 // GetItemArchitecture :
 // returns the whole architecture of a spectific type
 // returns 3 arguments:
-//	- []string, list of vertices
-//	- map[string][]string, list of edges, the key is the child, and the list are the list of parents
+//	- []model.Item, list of vertices
+//	- map[string][]model.Item, list of edges, the key is the child, and the list are the list of parents
 //	- error, error if any
 // TODO test it
 func GetItemArchitecture(
 	idb database.IAMDatabase,
 	haveToOpenConnection bool,
 	iType model.ItemType,
-) ([]string, map[string][]string, error) {
+) ([]model.Item, map[string][]model.Item, error) {
 	var (
 		items     []model.Item
 		itemLinks []model.ItemLink
@@ -288,33 +288,69 @@ func GetItemArchitecture(
 	db := idb.DB().Where("type = ?", iType).Find(&items)
 
 	if db.Error != nil {
-		return []string{}, map[string][]string{}, nil
+		return []model.Item{}, map[string][]model.Item{}, nil
 	}
 
 	db2 := idb.DB().Where("type = ?", iType).Find(&itemLinks)
 
 	if db2.Error != nil {
-		return []string{}, map[string][]string{}, nil
+		return []model.Item{}, map[string][]model.Item{}, nil
 	}
 
-	res := make([]string, len(items))
-	parentTable := make(map[string][]string)
-	assocTable := make(map[uint64]string)
+	parentTable := make(map[string][]model.Item)
+	assocTable := make(map[uint64]int)
 
 	for i := range items {
-		role := &items[i]
-		res[i] = role.Name
-		assocTable[role.ID] = role.Name
+		item := &items[i]
+		assocTable[item.ID] = i
 	}
 
 	for _, link := range itemLinks {
-		childName := assocTable[link.IDChild]
-		parentName := assocTable[link.IDParent]
+		childName := items[assocTable[link.IDChild]].Name
+		parent := items[assocTable[link.IDParent]]
 
-		parentTable[childName] = append(parentTable[childName], parentName)
+		parentTable[childName] = append(parentTable[childName], parent)
 	}
 
-	return res, parentTable, db.Error
+	return items, parentTable, db.Error
+}
+
+// GetItemArchitectureNameOnly :
+// returns the whole architecture of a spectific type
+// returns 3 arguments:
+//	- []string, list of vertices
+//	- map[string][]string, list of edges, the key is the child, and the list are the list of parents
+//	- error, error if any
+// TODO test it
+func GetItemArchitectureNameOnly(
+	idb database.IAMDatabase,
+	haveToOpenConnection bool,
+	iType model.ItemType,
+) ([]string, map[string][]string, error) {
+	vertices, parentTable, err := GetItemArchitecture(idb, haveToOpenConnection, iType)
+	newParentTable := make(map[string][]string)
+	newVertices := []string{}
+
+	if err != nil {
+		return newVertices, newParentTable, err
+	}
+
+	for key := range parentTable {
+		newParentTable[key] = make([]string, len(parentTable[key]))
+
+		for i := range parentTable[key] {
+			name := parentTable[key][i].Name
+			newParentTable[key][i] = name
+		}
+	}
+
+	newVertices = make([]string, len(vertices))
+
+	for i := range vertices {
+		newVertices[i] = vertices[i].Name
+	}
+
+	return newVertices, newParentTable, err
 }
 
 // TODO implement a function that add a whole architecture
