@@ -349,6 +349,7 @@ func (iam IAM) AddPermission(
 	domainName string,
 	objName string,
 	act constant.Action,
+	eff constant.Effect,
 ) error {
 	return engine.AddPermission(
 		iam.idb,
@@ -357,6 +358,7 @@ func (iam IAM) AddPermission(
 		domainName,
 		objName,
 		act,
+		eff,
 	)
 }
 

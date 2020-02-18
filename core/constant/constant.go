@@ -13,7 +13,7 @@ type Action int
 
 //nolint: golint, stylecheck
 const (
-	ACTION_EXECUTE Action = iota
+	ACTION_EXECUTE Action = 1 + iota
 )
 
 //Effect :
@@ -22,6 +22,6 @@ type Effect int
 
 //nolint: golint, stylecheck
 const (
-	EFFECT_ALLOW Effect = iota
+	EFFECT_ALLOW Effect = 1 + iota
 	EFFECT_DENY
 )

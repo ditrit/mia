@@ -23,13 +23,13 @@ func TestPermission(t *testing.T) {
 		t.Errorf("remove permission that doesn't exist shouldn't work")
 	}
 
-	err = iam.AddPermission(roleName, domainName, objName, constant.ACTION_EXECUTE)
+	err = iam.AddPermission(roleName, domainName, objName, constant.ACTION_EXECUTE, constant.EFFECT_ALLOW)
 
 	if err != nil {
 		t.Errorf("should have added the permission")
 	}
 
-	err = iam.AddPermission(roleName, domainName, objName, constant.ACTION_EXECUTE)
+	err = iam.AddPermission(roleName, domainName, objName, constant.ACTION_EXECUTE, constant.EFFECT_ALLOW)
 
 	if err == nil {
 		t.Errorf("should have failed cause it's already exists")

@@ -56,9 +56,55 @@ func getAncestorOf(
 	return resSet.ToSlice(), nil
 }
 
+func getWantedAssignments(
+	idb database.IAMDatabase,
+	subjectIDs []uint64,
+) ([]model.Assignment, error) {
+	var assigns []model.Assignment
+
+	if len(subjectIDs) == 0 {
+		return assigns, nil
+	}
+
+	tx := idb.DB().Where("id_subject = ?", subjectIDs[0])
+
+	for i := 1; i < len(subjectIDs); i++ {
+		tx = tx.Or("id_subject = ?", subjectIDs[i])
+	}
+
+	res := tx.Find(&assigns)
+
+	return assigns, res.Error
+}
+
+// TODO check if we actually have a 'WHERE COND1 AND (COND2 OR ... OR ... CONDN)
+func getWantedPermission(
+	idb database.IAMDatabase,
+	objectsIDs []uint64,
+	act constant.Action,
+) ([]model.Permission, error) {
+	var perms []model.Permission
+
+	if len(objectsIDs) == 0 {
+		return perms, nil
+	}
+
+	tx := idb.DB().Where("action = ?", act)
+	tx = tx.Where("id_object = ?", objectsIDs[0])
+
+	for i := 1; i < len(objectsIDs); i++ {
+		tx = tx.Or("id_object = ?", objectsIDs[i])
+	}
+
+	res := tx.Find(&perms)
+
+	return perms, res.Error
+}
+
 //Enforce :
 // the enforce function
 // TODO description
+// nolint: funlen, gocyclo
 func Enforce(
 	idb database.IAMDatabase,
 	subjectName string,
@@ -67,11 +113,17 @@ func Enforce(
 	action constant.Action,
 ) (constant.Effect, error) {
 	var (
-		subj          model.Item
-		domain        model.Item
-		object        model.Item
-		ancestorsSubj []uint64
-		err           error
+		subj               model.Item
+		domain             model.Item
+		object             model.Item
+		ancestorsSubj      []uint64
+		ancestorsDomain    []uint64
+		ancestorsDomainSet utils.IDSet
+		ancestorsObject    []uint64
+		assigns            []model.Assignment
+		perms              []model.Permission
+		err                error
+		effects            []constant.Effect
 	)
 
 	idb.OpenConnection()
@@ -101,14 +153,82 @@ func Enforce(
 	fmt.Printf("domain %s %d", domain.Name, domain.ID)
 	fmt.Printf("object %s %d", object.Name, object.ID)
 
+	// Step 2 : get Ancestors
+
 	ancestorsSubj, err = getAncestorOf(idb, subj)
 
 	if err != nil {
 		return constant.EFFECT_DENY, err
 	}
 
-	fmt.Printf("len ancestors subj %d\n", len(ancestorsSubj))
+	ancestorsDomain, err = getAncestorOf(idb, domain)
 
-	//TODO
-	return constant.EFFECT_DENY, errors.New("not implemented")
+	if err != nil {
+		return constant.EFFECT_DENY, err
+	}
+
+	ancestorsDomainSet = utils.NewIDSetFromSlice(ancestorsDomain)
+
+	ancestorsObject, err = getAncestorOf(idb, object)
+
+	if err != nil {
+		return constant.EFFECT_DENY, err
+	}
+
+	fmt.Printf("len ancestors subj %d\n", len(ancestorsSubj))
+	fmt.Printf("len ancestors subj %d\n", len(ancestorsDomain))
+	fmt.Printf("len ancestors subj %d\n", len(ancestorsObject))
+
+	// Step 3 : getAssignments
+
+	assigns, err = getWantedAssignments(idb, ancestorsSubj)
+
+	if err != nil {
+		return constant.EFFECT_DENY, err
+	}
+
+	fmt.Printf("number assigns : %d\n", len(assigns))
+
+	// Step 4 : getPermissions for given action
+
+	perms, err = getWantedPermission(idb, ancestorsSubj, action)
+
+	if err != nil {
+		return constant.EFFECT_DENY, err
+	}
+
+	fmt.Printf("number perms : %d\n", len(perms))
+
+	// Step 5 : resolve effects that apply
+
+	for indexAssign := range assigns {
+		for indexPerm := range perms {
+			assign := assigns[indexAssign]
+			perm := perms[indexPerm]
+
+			if assign.IDRole != perm.IDRole {
+				continue
+			}
+
+			if ancestorsDomainSet.Contains(assign.IDDomain) && ancestorsDomainSet.Contains(perm.IDDomain) {
+				effects = append(effects, perm.Effect)
+			}
+		}
+	}
+
+	fmt.Printf("number effects : %d\n", len(effects))
+
+	// Step 6 : dealing with effects
+
+	if len(effects) == 0 {
+		return constant.EFFECT_DENY, nil
+	}
+
+	for _, eff := range effects {
+		if eff == constant.EFFECT_DENY {
+			return constant.EFFECT_DENY, nil
+		}
+	}
+
+	return constant.EFFECT_ALLOW, nil
 }

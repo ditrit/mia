@@ -64,6 +64,7 @@ func askDBForPermissions(
 	permission.IDRole = role.ID
 	permission.IDDomain = domain.ID
 	permission.IDObject = object.ID
+	permission.Action = act
 
 	if res.RecordNotFound() {
 		return fIfNotFound(res, permission)
@@ -84,6 +85,7 @@ func AddPermission(
 	domainName string,
 	objName string,
 	act constant.Action,
+	eff constant.Effect,
 ) error {
 	return askDBForPermissions(idb, haveToOpenConnection, roleName, domainName, objName, act,
 		func(_ *gorm.DB, _ model.Permission) error {
@@ -91,6 +93,7 @@ func AddPermission(
 		},
 		func(db *gorm.DB, permission model.Permission) error {
 			db.Error = nil
+			permission.Effect = eff
 			res := db.Create(&permission)
 			return res.Error
 		},

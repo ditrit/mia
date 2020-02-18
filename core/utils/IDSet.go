@@ -16,6 +16,18 @@ func NewIDSet() IDSet {
 	return IDSet{}
 }
 
+// NewIDSetFromSlice :
+// Constructor
+func NewIDSetFromSlice(li []uint64) IDSet {
+	res := NewIDSet()
+
+	for _, num := range li {
+		res.Add(num)
+	}
+
+	return res
+}
+
 // Add :
 // Add a fresh element
 func (s IDSet) Add(elem uint64) {
@@ -26,6 +38,13 @@ func (s IDSet) Add(elem uint64) {
 // Remove an element
 func (s IDSet) Remove(elem uint64) {
 	delete(s.m, elem)
+}
+
+// Contains :
+// Returns if an element is in the set
+func (s IDSet) Contains(elem uint64) bool {
+	_, ok := s.m[elem]
+	return ok
 }
 
 // ToSlice :
