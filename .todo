@@ -1,10 +1,10 @@
 ToDo List iam:
 	✔ Designer le modèle @done(20-02-14 17:50)
 	✔ Implémenter le modèle @done(20-02-14 17:50)
-	☐ Tester le modèle
+	✔ Tester le modèle @done(20-02-18 10:02)
 	✔ Décrire l'interface @done(20-02-14 17:50)
-	☐ Implémenter l'interface
-	☐ Tester l'interface
+	✔ Implémenter l'interface @done(20-02-18 10:02)
+	✔ Tester l'interface @done(20-02-18 10:02)
 	☐ Faire la fonction Enforce
 
 ToDo Boring:
