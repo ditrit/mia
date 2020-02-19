@@ -27,7 +27,7 @@ KO_PROMPT="${_RED}KO${_END}"
 echo "0" > "$RES_FILE"
 
 (
-	cd ~/.go/src/iam
+	cd "$GOPATH/src/iam"
 	echo "mode: ${COVER_MODE}" > "${COVERAGE_FILE}"
 
 	COVERPKG=$(go list ./... | tr '\n' ',' | sed 's/,$//g')
