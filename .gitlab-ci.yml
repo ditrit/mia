@@ -15,28 +15,35 @@ before_script:
 
 stages:
     - Build
-    - Lint/Test
+    - Lint
+    - Test
+    - TestCoverage
 
 build:
     stage: Build
     script:
-        - 'go build'
+        - 'make build'
 
 go_fmt:
-    stage: Lint/Test
+    stage: Lint
     script:
-        - 'gofmt -l .'
+        - 'make gofmt'
 
 golangci-lint:
-    stage: Lint/Test
+    stage: Lint
     script:
         - 'curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.23.3'
         - 'golangci-lint --version'
-        - 'golangci-lint run --timeout 30m -v ./...'
+        - 'make golangci'
 
 go_test:
-    stage: Lint/Test
+    stage: Test
     script:
-        - 'go test ./...'
+        - 'make test'
+
+go_coverage:
+    stage: TestCoverage
+    script:
+        - 'make coverage'
 
 ...
