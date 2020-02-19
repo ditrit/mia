@@ -8,9 +8,9 @@ MIN_TOTAL="85"
 COVER_MODE="atomic"
 
 COVERAGE_FILE="coverage.out"
-PROFILE_FILE="profile.out"
-FINAL_OUT="coverage_final.out"
-RES_FILE="res.out"
+PROFILE_FILE="tmp_profile.out"
+FINAL_OUT="tmp_coverage_final.out"
+RES_FILE="tmp_res.out"
 
 _RED=$(tput setaf 1 || echo "")
 _GREEN=$(tput setaf 2 || echo "")

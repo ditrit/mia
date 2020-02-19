@@ -73,18 +73,13 @@ func getWantedAssignments(
 		return assigns, nil
 	}
 
-	tx := idb.DB().Where("id_subject = ?", subjectIDs[0])
-
-	for i := 1; i < len(subjectIDs); i++ {
-		tx = tx.Or("id_subject = ?", subjectIDs[i])
-	}
-
+	tx := idb.DB()
+	tx = tx.Where("id_subject IN (?)", subjectIDs)
 	res := tx.Find(&assigns)
 
 	return assigns, res.Error
 }
 
-// TODO check if we actually have a 'WHERE COND1 AND (COND2 OR ... OR ... CONDN)
 func getWantedPermission(
 	idb database.IAMDatabase,
 	objectsIDs []uint64,
@@ -96,12 +91,9 @@ func getWantedPermission(
 		return perms, nil
 	}
 
-	tx := idb.DB().Where("action = ?", act)
-	tx = tx.Where("id_object = ?", objectsIDs[0])
-
-	for i := 1; i < len(objectsIDs); i++ {
-		tx = tx.Or("id_object = ?", objectsIDs[i])
-	}
+	tx := idb.DB()
+	tx = tx.Where("action = ?", act)
+	tx = tx.Where("id_object IN (?)", objectsIDs)
 
 	res := tx.Find(&perms)
 
