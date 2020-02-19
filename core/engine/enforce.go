@@ -101,8 +101,7 @@ func getWantedPermission(
 }
 
 //Enforce :
-// the enforce function
-// TODO description
+// the enforce function resolves if a subject can execute an action on an object in a given context
 // nolint: funlen, gocyclo
 func Enforce(
 	idb database.IAMDatabase,

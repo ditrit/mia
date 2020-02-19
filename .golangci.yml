@@ -51,13 +51,13 @@ issues:
   exclude-rules:
 
     - linters: dupl
-      path: test/engine_not_enforce/items_domains_test.go
+      path: test/engine_1/items_domains_test.go
 
     - linters: dupl
-      path: test/engine_not_enforce/items_subjects_test.go
+      path: test/engine_1/items_subjects_test.go
 
     - linters: dupl
-      path: test/engine_not_enforce/items_objects_test.go
+      path: test/engine_1/items_objects_test.go
 
     # Don't change it
     # ignore name convention from golint

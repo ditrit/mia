@@ -2,7 +2,6 @@
 // Contains the implementation of a simple string set
 // optimization with the map default implementation
 // This struct contains only the minimal code needed by the project
-// TODO test this struct
 package utils
 
 // StringSet :

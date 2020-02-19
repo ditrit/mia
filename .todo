@@ -7,18 +7,18 @@ ToDo List iam:
 	✔ Tester l'interface @done(20-02-18 10:02)
 	✔ Faire la fonction Enforce @done(20-02-18 17:08)
 	☐ hiérarchiser les droits pour les effets en fonction de la distance pour les domaines
-	☐ suprimer la hiérarchie des subjects
-	☐ prévoir le rollback et les saves
-	☐ utiliser les transactions
-
-ToDo Boring:
-	☐ Faire tous les todos in the code
-	☐ Vérifier si à l'ajout d'une arête on reste sur un DAG
-	☐ Vérifier que si un item est enlevé, ça casse pas des liens
-	☐ Si un domain est rajouté, vérifier de le rajouter au domain principal
 	☐ Demander l'ensemble de l'architecture
-	☐ faire un affichage dot graphfiz
+	☐ prévoir le rollback et les saves
+	☐ Faire tous les todos in the code
 	☐ Faire une transformation pour les subjects (par name et par ID externe)
 	☐ Lors de l'ajout d'un assignment ou d'une permission, vérifiez la consistence
-	☐ Add A whole architecture
 	☐ Cannot delete the default domain
+	☐ Vérifier que si un item est enlevé, ça casse pas des liens
+	☐ Vérifier si à l'ajout d'une arête on reste sur un DAG
+	☐ Si un domain est rajouté, vérifier de le rajouter au domain principal
+	
+ToDo Boring:
+	☐ faire un affichage dot graphfiz
+	☐ Add A whole architecture
+	☐ utiliser les transactions
+	☐ suprimer la hiérarchie des subjects
