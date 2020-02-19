@@ -21,7 +21,7 @@ func askDBForItems(
 ) (model.Item, error) {
 	var queryItem model.Item
 
-	if len(name) == 0 {
+	if iType != model.ITEM_TYPE_DOMAIN && len(name) == 0 {
 		return queryItem, errors.New("the name cannot be empty")
 	}
 
@@ -96,6 +96,7 @@ func askDBForItemLinks(
 		return res.Error
 	}
 
+	sLink.Type = iType
 	sLink.IDParent = parentDB.ID
 	sLink.IDChild = childDB.ID
 

@@ -44,7 +44,14 @@ func getAncestorOf(
 
 	setToVisit.Add(item.Name)
 
-	for key, empty := setToVisit.Pop(); !empty; {
+	for {
+		key, empty := setToVisit.Pop()
+		if !empty {
+			break
+		}
+
+		// fmt.Println(key)
+
 		resSet.Add(mapNameToItem[key].ID)
 
 		for index := range parentTable[key] {
@@ -149,9 +156,9 @@ func Enforce(
 		return constant.EFFECT_DENY, err
 	}
 
-	fmt.Printf("subj %s %d", subj.Name, subj.ID)
-	fmt.Printf("domain %s %d", domain.Name, domain.ID)
-	fmt.Printf("object %s %d", object.Name, object.ID)
+	fmt.Printf("subj %s %d\n", subj.Name, subj.ID)
+	fmt.Printf("domain %s %d\n", domain.Name, domain.ID)
+	fmt.Printf("object %s %d\n", object.Name, object.ID)
 
 	// Step 2 : get Ancestors
 
@@ -176,8 +183,11 @@ func Enforce(
 	}
 
 	fmt.Printf("len ancestors subj %d\n", len(ancestorsSubj))
-	fmt.Printf("len ancestors subj %d\n", len(ancestorsDomain))
-	fmt.Printf("len ancestors subj %d\n", len(ancestorsObject))
+	fmt.Println(ancestorsSubj)
+	fmt.Printf("len ancestors domain %d\n", len(ancestorsDomain))
+	fmt.Println(ancestorsDomain)
+	fmt.Printf("len ancestors objects %d\n", len(ancestorsObject))
+	fmt.Println(ancestorsObject)
 
 	// Step 3 : getAssignments
 
@@ -191,7 +201,7 @@ func Enforce(
 
 	// Step 4 : getPermissions for given action
 
-	perms, err = getWantedPermission(idb, ancestorsSubj, action)
+	perms, err = getWantedPermission(idb, ancestorsObject, action)
 
 	if err != nil {
 		return constant.EFFECT_DENY, err

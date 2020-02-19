@@ -78,7 +78,7 @@ func NewDomain(name string) (*Item, error) {
 func GetRootDomain() *Item {
 	res := new(Item)
 	res.Type = ITEM_TYPE_DOMAIN
-	res.Name = ""
+	res.Name = constant.ROOT_DOMAIN
 
 	return res
 }
