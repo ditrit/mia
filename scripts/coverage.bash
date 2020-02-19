@@ -22,7 +22,7 @@ _PURPLE=$(tput setaf 5 || echo "")
 _END=$(tput sgr0 || echo "")
 
 OK_PROMPT="${_GREEN}OK${_END}"
-KO_PROMPT="${_RED}KO${_END}"
+KO_PROMPT="${_RED}==FAIL==${_END}"
 
 echo "0" > "$RES_FILE"
 
