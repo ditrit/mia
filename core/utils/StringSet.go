@@ -13,7 +13,9 @@ type StringSet struct {
 // NewStringSet :
 // Constructor
 func NewStringSet() StringSet {
-	return StringSet{}
+	return StringSet{
+		m: make(map[string]struct{}),
+	}
 }
 
 // Add :

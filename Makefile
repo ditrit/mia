@@ -19,7 +19,7 @@ golangci:
 
 .PHONY: test
 test:
-	go test ./...
+	go test -v ./...
 
 .PHONY: coverage
 coverage:

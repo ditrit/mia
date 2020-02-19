@@ -13,7 +13,9 @@ type IDSet struct {
 // NewIDSet :
 // Constructor
 func NewIDSet() IDSet {
-	return IDSet{}
+	return IDSet{
+		m: make(map[uint64]struct{}),
+	}
 }
 
 // NewIDSetFromSlice :

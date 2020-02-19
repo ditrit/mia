@@ -42,7 +42,6 @@ echo "0" > "$RES_FILE"
 	done
 
 	go tool cover -func="${COVERAGE_FILE}" > "${FINAL_OUT}"
-	rm -f "${COVERAGE_FILE}"
 
 	tr -s '\t' < "${FINAL_OUT}" | while read -r location nameFunc coverage;
 	do
