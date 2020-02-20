@@ -15,4 +15,10 @@ func TestRole(t *testing.T) {
 	if r.Name != "test" {
 		t.Errorf("NewRole wrong name")
 	}
+
+	_, err = model.NewRole("")
+
+	if err == nil {
+		t.Errorf("should have failed, role name can't be empty")
+	}
 }

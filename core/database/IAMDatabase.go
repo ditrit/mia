@@ -60,7 +60,12 @@ func (idb *IAMDatabase) OpenConnection() {
 // Ends a connection
 // Must be called after OpenConnection
 func (idb *IAMDatabase) CloseConnection() {
+	if idb.db == nil {
+		panic("failed to close database, wasn't opened")
+	}
+
 	err := idb.db.Close()
+
 	if err != nil {
 		fmt.Println(err.Error())
 		panic("failed to close database")
