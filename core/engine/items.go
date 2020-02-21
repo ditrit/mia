@@ -270,7 +270,6 @@ func GetItem(
 //	- []model.Item, list of vertices
 //	- map[string][]model.Item, list of edges, the key is the child, and the list are the list of parents
 //	- error, error if any
-// TODO test it
 func GetItemArchitecture(
 	idb database.IAMDatabase,
 	haveToOpenConnection bool,
@@ -322,7 +321,6 @@ func GetItemArchitecture(
 //	- []string, list of vertices
 //	- map[string][]string, list of edges, the key is the child, and the list are the list of parents
 //	- error, error if any
-// TODO test it
 func GetItemArchitectureNameOnly(
 	idb database.IAMDatabase,
 	haveToOpenConnection bool,
