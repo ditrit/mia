@@ -30,11 +30,11 @@ type Item struct {
 //NewItem :
 // Constructor
 func NewItem(iType ItemType, name string) (*Item, error) {
-	if err := IsNameValidForItem(name); err != nil {
+	if err := IsTypeValid(iType); err != nil {
 		return nil, err
 	}
 
-	if err := IsTypeValid(iType); err != nil {
+	if err := IsNameValidForItem(iType, name); err != nil {
 		return nil, err
 	}
 
@@ -47,12 +47,18 @@ func NewItem(iType ItemType, name string) (*Item, error) {
 
 //IsNameValidForItem :
 // Is name valid for item
-func IsNameValidForItem(name string) error {
+func IsNameValidForItem(iType ItemType, name string) error {
 	switch {
 	case len(name) > constant.NAME_MAX_LEN:
 		return errors.New("the name cannot be longer that 255 characters")
 	case len(name) == 0:
 		return errors.New("the name cannot be empty")
+	}
+
+	rootName, _ := GetRootNameWithType(iType)
+
+	if name == rootName {
+		return errors.New("the name cannot be the same as root")
 	}
 
 	return nil
@@ -97,9 +103,17 @@ func NewDomain(name string) (*Item, error) {
 func GetRoots() []*Item {
 	res := []*Item{nil, nil, nil}
 
-	res[0], _ = NewDomain(constant.ROOT_DOMAINS)
-	res[1], _ = NewSubject(constant.ROOT_SUBJECTS)
-	res[2], _ = NewObject(constant.ROOT_OBJECTS)
+	res[0] = new(Item)
+	res[0].Name = constant.ROOT_SUBJECTS
+	res[0].Type = ITEM_TYPE_SUBJ
+
+	res[1] = new(Item)
+	res[1].Name = constant.ROOT_DOMAINS
+	res[1].Type = ITEM_TYPE_DOMAIN
+
+	res[2] = new(Item)
+	res[2].Name = constant.ROOT_OBJECTS
+	res[2].Type = ITEM_TYPE_OBJ
 
 	return res
 }
@@ -110,7 +124,7 @@ func GetRootNameWithType(iType ItemType) (string, error) {
 	roots := GetRoots()
 
 	if err := IsTypeValid(iType); err != nil {
-		return "", errors.New("the type is unknown")
+		return "", err
 	}
 
 	for _, elem := range roots {

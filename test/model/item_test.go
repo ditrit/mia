@@ -73,4 +73,8 @@ func TestRoots(t *testing.T) {
 	if _, err := model.GetRootNameWithType(42); err == nil { //nolint: gomnd
 		t.Errorf("GetRootNameWithType should return error on unknown type")
 	}
+
+	if _, err := model.NewItem(model.ITEM_TYPE_SUBJ, constant.ROOT_SUBJECTS); err == nil {
+		t.Errorf("NewItem with new name shouldn't be allowed")
+	}
 }

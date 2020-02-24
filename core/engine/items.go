@@ -201,7 +201,7 @@ func RenameItem(
 
 	if err != nil {
 		return err
-	} else if err = model.IsNameValidForItem(newName); err != nil {
+	} else if err = model.IsNameValidForItem(iType, newName); err != nil {
 		return err
 	}
 
