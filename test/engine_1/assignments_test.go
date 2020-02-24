@@ -13,8 +13,8 @@ func TestAssignment(t *testing.T) {
 	)
 
 	_ = iam.AddRole(roleName)
-	_ = iam.AddSubject(subjName)
-	_ = iam.AddDomain(domainName)
+	_ = iam.AddSubjectToRoot(subjName)
+	_ = iam.AddDomainToRoot(domainName)
 
 	err := iam.RemoveAssignment(roleName, subjName, domainName)
 

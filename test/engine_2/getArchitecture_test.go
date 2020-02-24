@@ -94,16 +94,15 @@ func TestArchitecture(t *testing.T) {
 		"David",
 		"DevTeam",
 		"Administration",
-		"all",
 	}
 
 	subjectsLinks := []link{
+		{parent: constant.ROOT_SUBJECTS, child: "Administration"},
+		{parent: constant.ROOT_SUBJECTS, child: "DevTeam"},
+		{parent: "Administration", child: "Angel"},
 		{parent: "DevTeam", child: "Barney"},
 		{parent: "DevTeam", child: "Charlie"},
 		{parent: "DevTeam", child: "David"},
-		{parent: "Administration", child: "Angel"},
-		{parent: "all", child: "Administration"},
-		{parent: "all", child: "DevTeam"},
 	}
 
 	domains := []string{
@@ -116,8 +115,8 @@ func TestArchitecture(t *testing.T) {
 	domainLinks := []link{
 		{parent: constant.ROOT_DOMAINS, child: "ORNESS"},
 		{parent: "ORNESS", child: "DevTeam"},
-		{parent: "DevTeam", child: "Gandalf"},
 		{parent: "ORNESS", child: "Commercial"},
+		{parent: "DevTeam", child: "Gandalf"},
 	}
 
 	objects := []string{
@@ -126,31 +125,32 @@ func TestArchitecture(t *testing.T) {
 	}
 
 	objectLinks := []link{
+		{parent: constant.ROOT_OBJECTS, child: "GitLab"},
 		{parent: "GitLab", child: "GitCommit"},
 	}
 
-	for _, subj := range subjects {
-		_ = iam.AddSubject(subj)
-	}
-
 	for _, link := range subjectsLinks {
-		_ = iam.AddSubjectLink(link.parent, link.child)
-	}
-
-	for _, domain := range domains {
-		_ = iam.AddDomain(domain)
+		if link.parent == constant.ROOT_SUBJECTS {
+			_ = iam.AddSubjectToRoot(link.child)
+		} else {
+			_ = iam.AddSubject(link.child, link.parent)
+		}
 	}
 
 	for _, link := range domainLinks {
-		_ = iam.AddDomainLink(link.parent, link.child)
-	}
-
-	for _, object := range objects {
-		_ = iam.AddObject(object)
+		if link.parent == constant.ROOT_DOMAINS {
+			_ = iam.AddDomainToRoot(link.child)
+		} else {
+			_ = iam.AddDomain(link.child, link.parent)
+		}
 	}
 
 	for _, link := range objectLinks {
-		_ = iam.AddObjectLink(link.parent, link.child)
+		if link.parent == constant.ROOT_OBJECTS {
+			_ = iam.AddObjectToRoot(link.child)
+		} else {
+			_ = iam.AddObject(link.child, link.parent)
+		}
 	}
 
 	subjVertices, subjParentTable, err := iam.GetSubjectArchitecture()

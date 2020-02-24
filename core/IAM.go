@@ -71,12 +71,28 @@ func (iam IAM) GetAllRoles() ([]string, error) {
 
 // AddSubject :
 // See details in iam/core/engine/items.go
-func (iam IAM) AddSubject(name string) error {
+func (iam IAM) AddSubject(name string, nameParent string) error {
 	return engine.AddItem(
 		iam.idb,
 		true,
 		model.ITEM_TYPE_SUBJ,
 		name,
+		nameParent,
+	)
+}
+
+// AddSubjectToRoot :
+// See details in iam/core/engine/items.go
+// add subject litteraly under roots
+func (iam IAM) AddSubjectToRoot(name string) error {
+	rootName, _ := model.GetRootNameWithType(model.ITEM_TYPE_SUBJ)
+
+	return engine.AddItem(
+		iam.idb,
+		true,
+		model.ITEM_TYPE_SUBJ,
+		name,
+		rootName,
 	)
 }
 
@@ -150,12 +166,28 @@ func (iam IAM) GetSubjectArchitecture() ([]string, map[string][]string, error) {
 
 // AddObject :
 // See details in iam/core/engine/items.go
-func (iam IAM) AddObject(name string) error {
+func (iam IAM) AddObject(name string, nameParent string) error {
 	return engine.AddItem(
 		iam.idb,
 		true,
 		model.ITEM_TYPE_OBJ,
 		name,
+		nameParent,
+	)
+}
+
+// AddObjectToRoot :
+// See details in iam/core/engine/items.go
+// add object litteraly under roots
+func (iam IAM) AddObjectToRoot(name string) error {
+	rootName, _ := model.GetRootNameWithType(model.ITEM_TYPE_OBJ)
+
+	return engine.AddItem(
+		iam.idb,
+		true,
+		model.ITEM_TYPE_OBJ,
+		name,
+		rootName,
 	)
 }
 
@@ -229,12 +261,28 @@ func (iam IAM) GetObjectArchitecture() ([]string, map[string][]string, error) {
 
 // AddDomain :
 // See details in iam/core/engine/items.go
-func (iam IAM) AddDomain(name string) error {
+func (iam IAM) AddDomain(name string, nameParent string) error {
 	return engine.AddItem(
 		iam.idb,
 		true,
 		model.ITEM_TYPE_DOMAIN,
 		name,
+		nameParent,
+	)
+}
+
+// AddDomainToRoot :
+// See details in iam/core/engine/items.go
+// add domain litteraly under roots
+func (iam IAM) AddDomainToRoot(name string) error {
+	rootName, _ := model.GetRootNameWithType(model.ITEM_TYPE_DOMAIN)
+
+	return engine.AddItem(
+		iam.idb,
+		true,
+		model.ITEM_TYPE_DOMAIN,
+		name,
+		rootName,
 	)
 }
 

@@ -14,8 +14,8 @@ func TestPermission(t *testing.T) {
 	)
 
 	_ = iam.AddRole(roleName)
-	_ = iam.AddDomain(domainName)
-	_ = iam.AddObject(objName)
+	_ = iam.AddDomainToRoot(domainName)
+	_ = iam.AddObjectToRoot(objName)
 
 	err := iam.RemovePermission(roleName, domainName, objName, constant.ACTION_EXECUTE)
 

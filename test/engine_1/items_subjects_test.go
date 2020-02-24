@@ -12,7 +12,7 @@ func TestGetSubjectUnknown(t *testing.T) {
 }
 
 func TestAddSubject(t *testing.T) {
-	err := iam.AddSubject("bobby")
+	err := iam.AddSubjectToRoot("bobby")
 
 	if err != nil {
 		t.Errorf("add should work : %s", err.Error())
@@ -27,21 +27,21 @@ func TestAddSubject(t *testing.T) {
 		t.Errorf("name is not the same")
 	}
 
-	err = iam.AddSubject("")
+	err = iam.AddSubjectToRoot("")
 
 	if err == nil {
 		t.Errorf("should not add an empty subject")
 	}
 
-	err = iam.AddSubject("bobby")
+	err = iam.AddSubjectToRoot("bobby")
 
 	if err == nil {
 		t.Errorf("should not add a subject that's already exists")
 	}
 
-	_ = iam.AddSubject("alice")
-	_ = iam.AddSubject("carole")
-	_ = iam.AddSubject("david")
+	_ = iam.AddSubjectToRoot("alice")
+	_ = iam.AddSubjectToRoot("carole")
+	_ = iam.AddSubjectToRoot("david")
 
 	subj, err = iam.GetSubject("alice")
 	if err != nil {
@@ -54,7 +54,7 @@ func TestAddSubject(t *testing.T) {
 }
 
 func TestRemoveSubject(t *testing.T) {
-	_ = iam.AddSubject("elodie")
+	_ = iam.AddSubjectToRoot("elodie")
 
 	err := iam.RemoveSubject("elodie")
 	if err != nil {
@@ -68,8 +68,8 @@ func TestRemoveSubject(t *testing.T) {
 }
 
 func TestRenameSubject(t *testing.T) {
-	_ = iam.AddSubject("fan")
-	_ = iam.AddSubject("gwen")
+	_ = iam.AddSubjectToRoot("fan")
+	_ = iam.AddSubjectToRoot("gwen")
 
 	fanFromDB1, _ := iam.GetSubject("fan")
 
@@ -99,8 +99,8 @@ func TestRenameSubject(t *testing.T) {
 }
 
 func TestAddSubjectLink(t *testing.T) {
-	_ = iam.AddSubject("helene")
-	_ = iam.AddSubject("ismail")
+	_ = iam.AddSubjectToRoot("helene")
+	_ = iam.AddSubjectToRoot("ismail")
 
 	err := iam.AddSubjectLink("helene", "ismail")
 
@@ -122,8 +122,8 @@ func TestAddSubjectLink(t *testing.T) {
 }
 
 func TestRemoveSubjectLink(t *testing.T) {
-	_ = iam.AddSubject("kevin")
-	_ = iam.AddSubject("laure")
+	_ = iam.AddSubjectToRoot("kevin")
+	_ = iam.AddSubjectToRoot("laure")
 
 	_ = iam.AddSubjectLink("kevin", "laure")
 

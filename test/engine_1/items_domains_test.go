@@ -13,7 +13,7 @@ func TestGetDomainUnknown(t *testing.T) {
 
 //nolint: goconst
 func TestAddDomain(t *testing.T) {
-	err := iam.AddDomain("bobby")
+	err := iam.AddDomainToRoot("bobby")
 
 	if err != nil {
 		t.Errorf("add should work : %s", err.Error())
@@ -28,21 +28,21 @@ func TestAddDomain(t *testing.T) {
 		t.Errorf("name is not the same")
 	}
 
-	err = iam.AddDomain("")
+	err = iam.AddDomainToRoot("")
 
 	if err == nil {
 		t.Errorf("should not add an empty Domain")
 	}
 
-	err = iam.AddDomain("bobby")
+	err = iam.AddDomainToRoot("bobby")
 
 	if err == nil {
 		t.Errorf("should not add a Domain that's already existe")
 	}
 
-	_ = iam.AddDomain("alice")
-	_ = iam.AddDomain("carole")
-	_ = iam.AddDomain("david")
+	_ = iam.AddDomainToRoot("alice")
+	_ = iam.AddDomainToRoot("carole")
+	_ = iam.AddDomainToRoot("david")
 
 	subj, err = iam.GetDomain("alice")
 	if err != nil {
@@ -55,7 +55,7 @@ func TestAddDomain(t *testing.T) {
 }
 
 func TestRemoveDomain(t *testing.T) {
-	_ = iam.AddDomain("elodie")
+	_ = iam.AddDomainToRoot("elodie")
 
 	err := iam.RemoveDomain("elodie")
 	if err != nil {
@@ -69,8 +69,8 @@ func TestRemoveDomain(t *testing.T) {
 }
 
 func TestRenameDomain(t *testing.T) {
-	_ = iam.AddDomain("fan")
-	_ = iam.AddDomain("gwen")
+	_ = iam.AddDomainToRoot("fan")
+	_ = iam.AddDomainToRoot("gwen")
 
 	fanFromDB1, _ := iam.GetDomain("fan")
 
@@ -100,8 +100,8 @@ func TestRenameDomain(t *testing.T) {
 }
 
 func TestAddDomainLink(t *testing.T) {
-	_ = iam.AddDomain("helene")
-	_ = iam.AddDomain("ismail")
+	_ = iam.AddDomainToRoot("helene")
+	_ = iam.AddDomainToRoot("ismail")
 
 	err := iam.AddDomainLink("helene", "ismail")
 
@@ -123,8 +123,8 @@ func TestAddDomainLink(t *testing.T) {
 }
 
 func TestRemoveDomainLink(t *testing.T) {
-	_ = iam.AddDomain("kevin")
-	_ = iam.AddDomain("laure")
+	_ = iam.AddDomainToRoot("kevin")
+	_ = iam.AddDomainToRoot("laure")
 
 	_ = iam.AddDomainLink("kevin", "laure")
 

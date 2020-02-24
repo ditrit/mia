@@ -117,6 +117,7 @@ func AddItem(
 	haveToOpenConnection bool,
 	iType model.ItemType,
 	name string,
+	parentName string,
 ) error {
 	item, err := model.NewItem(iType, name)
 
@@ -124,7 +125,18 @@ func AddItem(
 		return err
 	}
 
-	_, err = askDBForItems(idb, name, iType, haveToOpenConnection,
+	if haveToOpenConnection {
+		idb.OpenConnection()
+		defer idb.CloseConnection() //nolint: errcheck
+	}
+
+	_, err = GetItem(idb, false, iType, parentName)
+
+	if err != nil {
+		return err
+	}
+
+	_, err = askDBForItems(idb, name, iType, false,
 		func(_ *gorm.DB, qs model.Item) (model.Item, error) {
 			return qs, errors.New("the item already exists in the iam")
 		},
@@ -133,6 +145,12 @@ func AddItem(
 			res := db.Create(&item)
 			return qs, res.Error
 		})
+
+	if err != nil {
+		return err
+	}
+
+	err = AddItemLink(idb, false, iType, parentName, name)
 
 	return err
 }
