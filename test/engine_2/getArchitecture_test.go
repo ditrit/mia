@@ -21,24 +21,26 @@ func testEquity(
 	vertices []string,
 	parentTable map[string][]string,
 ) {
-	if iType == model.ITEM_TYPE_DOMAIN {
-		if len(items)+1 == len(vertices) {
-			foundRootDomain := false
+	rootName, err := model.GetRootNameWithType(iType)
 
-			for _, elem := range vertices {
-				if elem == constant.ROOT_DOMAIN {
-					foundRootDomain = true
-					break
-				}
-			}
+	if err != nil {
+		t.Errorf("GetRootNameWithType returns error")
+	}
 
-			if !foundRootDomain {
-				t.Errorf("root domain not found")
+	if len(items)+1 == len(vertices) {
+		foundRoot := false
+
+		for _, elem := range vertices {
+			if elem == rootName {
+				foundRoot = true
+				break
 			}
-		} else {
-			t.Errorf("not the same count of items")
 		}
-	} else if len(items) != len(vertices) {
+
+		if !foundRoot {
+			t.Errorf("root domain not found")
+		}
+	} else {
 		t.Errorf("not the same count of items")
 	}
 
@@ -112,7 +114,7 @@ func TestArchitecture(t *testing.T) {
 	}
 
 	domainLinks := []link{
-		{parent: "", child: "ORNESS"},
+		{parent: constant.ROOT_DOMAINS, child: "ORNESS"},
 		{parent: "ORNESS", child: "DevTeam"},
 		{parent: "DevTeam", child: "Gandalf"},
 		{parent: "ORNESS", child: "Commercial"},

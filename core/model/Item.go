@@ -34,6 +34,10 @@ func NewItem(iType ItemType, name string) (*Item, error) {
 		return nil, err
 	}
 
+	if err := IsTypeValid(iType); err != nil {
+		return nil, err
+	}
+
 	res := new(Item)
 	res.Type = iType
 	res.Name = name
@@ -54,6 +58,21 @@ func IsNameValidForItem(name string) error {
 	return nil
 }
 
+//IsTypeValid :
+// Is type in the list
+func IsTypeValid(iType ItemType) error {
+	switch iType {
+	case ITEM_TYPE_DOMAIN:
+		return nil
+	case ITEM_TYPE_OBJ:
+		return nil
+	case ITEM_TYPE_SUBJ:
+		return nil
+	}
+
+	return errors.New("the type is not correct")
+}
+
 //NewSubject :
 // Constructor
 func NewSubject(name string) (*Item, error) {
@@ -72,13 +91,33 @@ func NewDomain(name string) (*Item, error) {
 	return NewItem(ITEM_TYPE_DOMAIN, name)
 }
 
-//GetRootDomain :
-// Should not be called in normal workflow
-// Used only in database initialization
-func GetRootDomain() *Item {
-	res := new(Item)
-	res.Type = ITEM_TYPE_DOMAIN
-	res.Name = constant.ROOT_DOMAIN
+//GetRoots :
+// Used in database initialization
+// Used to check if a name is correct
+func GetRoots() []*Item {
+	res := []*Item{nil, nil, nil}
+
+	res[0], _ = NewDomain(constant.ROOT_DOMAINS)
+	res[1], _ = NewSubject(constant.ROOT_SUBJECTS)
+	res[2], _ = NewObject(constant.ROOT_OBJECTS)
 
 	return res
+}
+
+//GetRootNameWithType :
+// Used to check if a name is correct
+func GetRootNameWithType(iType ItemType) (string, error) {
+	roots := GetRoots()
+
+	if err := IsTypeValid(iType); err != nil {
+		return "", errors.New("the type is unknown")
+	}
+
+	for _, elem := range roots {
+		if elem.Type == iType {
+			return elem.Name, nil
+		}
+	}
+
+	panic("should never happened")
 }

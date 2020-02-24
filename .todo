@@ -16,7 +16,7 @@ ToDo List iam:
 		☐ Vérifier si à l'ajout d'une arête on reste sur un DAG
 		☐ Cannot delete the default domain
 		☐ Si un domain est rajouté, vérifier de le rajouter au domain principal
-		☐ faire des items qui englobent le reste
+		✔ faire des items qui englobent le reste @done(20-02-24 11:38)
 		☐ rename check if name is available
 		
 	☐ hiérarchiser les droits pour les effets en fonction de la topologie pour les domaines (uniquement sur domaines aves les différentes branches)

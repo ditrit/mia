@@ -4,8 +4,10 @@ package constant
 
 //nolint: golint, stylecheck
 const (
-	NAME_MAX_LEN int    = 255
-	ROOT_DOMAIN  string = ""
+	NAME_MAX_LEN  int    = 255
+	ROOT_DOMAINS  string = "__RootDomain__"
+	ROOT_SUBJECTS string = "__RootSubjects__"
+	ROOT_OBJECTS  string = "__RootObjects__"
 )
 
 //Action :

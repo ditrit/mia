@@ -103,7 +103,9 @@ func (idb IAMDatabase) dbInit() {
 
 	fmt.Printf("Create Empty Domain\n")
 
-	idb.db.Create(model.GetRootDomain())
+	for _, root := range model.GetRoots() {
+		idb.db.Create(root)
+	}
 }
 
 func (idb IAMDatabase) dbDrop() {

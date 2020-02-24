@@ -1,6 +1,7 @@
 package model_test
 
 import (
+	"iam/core/constant"
 	"iam/core/model"
 	"testing"
 )
@@ -54,22 +55,22 @@ func TestNewDomain(t *testing.T) {
 	case s.Name != "charlie":
 		t.Errorf("should have the good name")
 	}
-
-	_, err2 := model.NewDomain("")
-
-	if err2 == nil {
-		t.Errorf("root domain can't be instanciated with NewDomain")
-	}
 }
 
-func TestRootDomain(t *testing.T) {
-	s := model.GetRootDomain()
-
-	if s.Name != "" {
-		t.Errorf("root domain must not have root domain")
+func TestRoots(t *testing.T) {
+	if st, _ := model.GetRootNameWithType(model.ITEM_TYPE_DOMAIN); st != constant.ROOT_DOMAINS {
+		t.Errorf("domain root hasn't the good name")
 	}
 
-	if s.Type != model.ITEM_TYPE_DOMAIN {
-		t.Errorf("root domain must be of type domain")
+	if st, _ := model.GetRootNameWithType(model.ITEM_TYPE_SUBJ); st != constant.ROOT_SUBJECTS {
+		t.Errorf("subject root hasn't the good name")
+	}
+
+	if st, _ := model.GetRootNameWithType(model.ITEM_TYPE_OBJ); st != constant.ROOT_OBJECTS {
+		t.Errorf("object root hasn't the good name")
+	}
+
+	if _, err := model.GetRootNameWithType(42); err == nil { //nolint: gomnd
+		t.Errorf("GetRootNameWithType should return error on unknown type")
 	}
 }

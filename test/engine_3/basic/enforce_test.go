@@ -25,14 +25,14 @@ func TestBasicEnforce(t *testing.T) {
 	_ = iam.AddObject(objGitPush)
 	_ = iam.AddObject(objGitCommit)
 
-	_ = iam.AddDomainLink(constant.ROOT_DOMAIN, domain)
+	_ = iam.AddDomainLink(constant.ROOT_DOMAINS, domain)
 	_ = iam.AddObjectLink(objGit, objGitPull)
 	_ = iam.AddObjectLink(objGit, objGitPush)
 	_ = iam.AddObjectLink(objGit, objGitCommit)
 
 	_ = iam.AddRole(role)
 	_ = iam.AddAssignment(role, user1, domain)
-	_ = iam.AddPermission(role, constant.ROOT_DOMAIN, objGit, constant.ACTION_EXECUTE, true)
+	_ = iam.AddPermission(role, constant.ROOT_DOMAINS, objGit, constant.ACTION_EXECUTE, true)
 
 	eff, err := iam.Enforce(user1, domain, objGitCommit, constant.ACTION_EXECUTE)
 
