@@ -12,5 +12,5 @@ type Permission struct {
 	IDDomain uint64
 	IDObject uint64
 	Action   constant.Action
-	Effect   constant.Effect
+	Effect   bool
 }

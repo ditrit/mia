@@ -85,7 +85,7 @@ func AddPermission(
 	domainName string,
 	objName string,
 	act constant.Action,
-	eff constant.Effect,
+	eff bool,
 ) error {
 	return askDBForPermissions(idb, haveToOpenConnection, roleName, domainName, objName, act,
 		func(_ *gorm.DB, _ model.Permission) error {

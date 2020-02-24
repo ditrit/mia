@@ -32,7 +32,7 @@ func TestBasicEnforce(t *testing.T) {
 
 	_ = iam.AddRole(role)
 	_ = iam.AddAssignment(role, user1, domain)
-	_ = iam.AddPermission(role, constant.ROOT_DOMAIN, objGit, constant.ACTION_EXECUTE, constant.EFFECT_ALLOW)
+	_ = iam.AddPermission(role, constant.ROOT_DOMAIN, objGit, constant.ACTION_EXECUTE, true)
 
 	eff, err := iam.Enforce(user1, domain, objGitCommit, constant.ACTION_EXECUTE)
 
@@ -40,11 +40,11 @@ func TestBasicEnforce(t *testing.T) {
 		t.Errorf("Something went wrong")
 	}
 
-	if eff != constant.EFFECT_ALLOW {
+	if !eff {
 		t.Errorf("Wrong effect")
 	}
 
-	_ = iam.AddPermission(role, domain, objGitPull, constant.ACTION_EXECUTE, constant.EFFECT_DENY)
+	_ = iam.AddPermission(role, domain, objGitPull, constant.ACTION_EXECUTE, false)
 
 	eff, err = iam.Enforce(user1, domain, objGitPull, constant.ACTION_EXECUTE)
 
@@ -52,7 +52,7 @@ func TestBasicEnforce(t *testing.T) {
 		t.Errorf("Something went wrong")
 	}
 
-	if eff != constant.EFFECT_DENY {
+	if eff {
 		t.Errorf("Wrong effect")
 	}
 }

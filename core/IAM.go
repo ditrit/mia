@@ -349,7 +349,7 @@ func (iam IAM) AddPermission(
 	domainName string,
 	objName string,
 	act constant.Action,
-	eff constant.Effect,
+	eff bool,
 ) error {
 	return engine.AddPermission(
 		iam.idb,
@@ -391,7 +391,7 @@ func (iam IAM) Enforce(
 	domainName string,
 	objectName string,
 	action constant.Action,
-) (constant.Effect, error) {
+) (bool, error) {
 	return engine.Enforce(
 		iam.idb,
 		subjectName,

@@ -12,7 +12,7 @@ ToDo List iam:
 		☐ Vérifier que si un item est enlevé, ça casse pas des liens, mais pas les assignation et les permissions
 
 	Easy:
-		☐ remplacer les effects par les booléens
+		✔ remplacer les effects par les booléens @done(20-02-24 10:56)
 		☐ Vérifier si à l'ajout d'une arête on reste sur un DAG
 		☐ Cannot delete the default domain
 		☐ Si un domain est rajouté, vérifier de le rajouter au domain principal
@@ -21,7 +21,7 @@ ToDo List iam:
 		
 	☐ hiérarchiser les droits pour les effets en fonction de la topologie pour les domaines (uniquement sur domaines aves les différentes branches)
 	☐ prévoir le enforce avec une date
-	
+
 ToDo Boring:
 	☐ Faire tous les todos in the code
 	☐ faire un affichage dot graphfiz

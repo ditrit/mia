@@ -109,7 +109,7 @@ func Enforce(
 	domainName string,
 	objectName string,
 	action constant.Action,
-) (constant.Effect, error) {
+) (bool, error) {
 	var (
 		subj               model.Item
 		domain             model.Item
@@ -121,7 +121,7 @@ func Enforce(
 		assigns            []model.Assignment
 		perms              []model.Permission
 		err                error
-		effects            []constant.Effect
+		effects            []bool
 	)
 
 	idb.OpenConnection()
@@ -132,19 +132,19 @@ func Enforce(
 	subj, err = GetItem(idb, false, model.ITEM_TYPE_SUBJ, subjectName)
 
 	if err != nil {
-		return constant.EFFECT_DENY, err
+		return false, err
 	}
 
 	domain, err = GetItem(idb, false, model.ITEM_TYPE_DOMAIN, domainName)
 
 	if err != nil {
-		return constant.EFFECT_DENY, err
+		return false, err
 	}
 
 	object, err = GetItem(idb, false, model.ITEM_TYPE_OBJ, objectName)
 
 	if err != nil {
-		return constant.EFFECT_DENY, err
+		return false, err
 	}
 
 	fmt.Printf("subj %s %d\n", subj.Name, subj.ID)
@@ -156,13 +156,13 @@ func Enforce(
 	ancestorsSubj, err = getAncestorOf(idb, subj)
 
 	if err != nil {
-		return constant.EFFECT_DENY, err
+		return false, err
 	}
 
 	ancestorsDomain, err = getAncestorOf(idb, domain)
 
 	if err != nil {
-		return constant.EFFECT_DENY, err
+		return false, err
 	}
 
 	ancestorsDomainSet = utils.NewIDSetFromSlice(ancestorsDomain)
@@ -170,7 +170,7 @@ func Enforce(
 	ancestorsObject, err = getAncestorOf(idb, object)
 
 	if err != nil {
-		return constant.EFFECT_DENY, err
+		return false, err
 	}
 
 	fmt.Printf("len ancestors subj %d\n", len(ancestorsSubj))
@@ -185,7 +185,7 @@ func Enforce(
 	assigns, err = getWantedAssignments(idb, ancestorsSubj)
 
 	if err != nil {
-		return constant.EFFECT_DENY, err
+		return false, err
 	}
 
 	fmt.Printf("number assigns : %d\n", len(assigns))
@@ -195,7 +195,7 @@ func Enforce(
 	perms, err = getWantedPermission(idb, ancestorsObject, action)
 
 	if err != nil {
-		return constant.EFFECT_DENY, err
+		return false, err
 	}
 
 	fmt.Printf("number perms : %d\n", len(perms))
@@ -222,14 +222,14 @@ func Enforce(
 	// Step 6 : dealing with effects
 
 	if len(effects) == 0 {
-		return constant.EFFECT_DENY, nil
+		return false, nil
 	}
 
 	for _, eff := range effects {
-		if eff == constant.EFFECT_DENY {
-			return constant.EFFECT_DENY, nil
+		if !eff {
+			return false, nil
 		}
 	}
 
-	return constant.EFFECT_ALLOW, nil
+	return true, nil
 }
