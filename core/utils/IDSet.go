@@ -48,6 +48,12 @@ func (s IDSet) Contains(elem uint64) bool {
 	return ok
 }
 
+// Size :
+// Returns the number of elements that are in the set
+func (s IDSet) Size() int {
+	return len(s.m)
+}
+
 // ToSlice :
 // convert the set in a slice
 func (s IDSet) ToSlice() []uint64 {

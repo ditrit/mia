@@ -29,6 +29,13 @@ func (s StringSet) Remove(elem string) {
 	delete(s.m, elem)
 }
 
+// Contains :
+// Returns if an element is in the set
+func (s StringSet) Contains(elem string) bool {
+	_, ok := s.m[elem]
+	return ok
+}
+
 // Pop :
 // popping element if not empty
 func (s StringSet) Pop() (string, bool) {

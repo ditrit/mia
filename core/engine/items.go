@@ -222,6 +222,7 @@ func RenameItem(
 // returns an error if :
 //	- one of the items does not exists in the iam
 //	- the link already exists
+//	- the architecture breaks the DAG property
 func AddItemLink(
 	idb database.IAMDatabase,
 	haveToOpenConnection bool,
@@ -229,16 +230,42 @@ func AddItemLink(
 	nameParent string,
 	nameChild string,
 ) error {
-	return askDBForItemLinks(idb, nameParent, nameChild, iType, haveToOpenConnection,
+	if haveToOpenConnection {
+		idb.OpenConnection()
+		defer idb.CloseConnection() //nolint: errcheck
+	}
+
+	var candLink model.ItemLink
+
+	err := askDBForItemLinks(idb, nameParent, nameChild, iType, false,
 		func(db *gorm.DB, qs model.ItemLink) error {
 			return errors.New("the connection link already exists")
 		},
 		func(db *gorm.DB, qs model.ItemLink) error {
+			candLink = qs
 			db.Error = nil
-			res := db.Create(&qs)
-			return res.Error
+			// res := db.Create(&qs)
+			return nil
 		},
 	)
+
+	if err != nil {
+		return err
+	}
+
+	ancestorsParent, err := getAncestorOf(idb, false, nameParent, iType)
+
+	if err != nil {
+		return err
+	}
+
+	if ancestorsParent.Contains(candLink.IDChild) {
+		return errors.New("you can't add this relationship you will have a cycle")
+	}
+
+	res := idb.DB().Create(&candLink)
+
+	return res.Error
 }
 
 // RemoveItemLink :

@@ -3,65 +3,12 @@
 package engine
 
 import (
-	"errors"
 	"fmt"
 	"iam/core/constant"
 	"iam/core/database"
 	"iam/core/model"
 	"iam/core/utils"
 )
-
-func getAncestorOf(
-	idb database.IAMDatabase,
-	item model.Item,
-) ([]uint64, error) {
-	res := []uint64{}
-	resSet := utils.NewIDSet()
-	vertices, parentTable, err := GetItemArchitecture(idb, false, item.Type)
-	mapNameToItem := make(map[string]model.Item)
-
-	if err != nil {
-		return res, err
-	}
-
-	// Verify if item is in vertices
-	found := false
-
-	for i := range vertices {
-		name := vertices[i].Name
-		if name == item.Name {
-			found = true
-		}
-
-		mapNameToItem[name] = vertices[i]
-	}
-
-	if !found {
-		return res, errors.New("SNH: item wasn't found in the whole architecture")
-	}
-
-	setToVisit := utils.NewStringSet()
-
-	setToVisit.Add(item.Name)
-
-	for {
-		key, empty := setToVisit.Pop()
-		if !empty {
-			break
-		}
-
-		// fmt.Println(key)
-
-		resSet.Add(mapNameToItem[key].ID)
-
-		for index := range parentTable[key] {
-			name := parentTable[key][index].Name
-			setToVisit.Add(name)
-		}
-	}
-
-	return resSet.ToSlice(), nil
-}
 
 func getWantedAssignments(
 	idb database.IAMDatabase,
@@ -111,17 +58,16 @@ func Enforce(
 	action constant.Action,
 ) (bool, error) {
 	var (
-		subj               model.Item
-		domain             model.Item
-		object             model.Item
-		ancestorsSubj      []uint64
-		ancestorsDomain    []uint64
-		ancestorsDomainSet utils.IDSet
-		ancestorsObject    []uint64
-		assigns            []model.Assignment
-		perms              []model.Permission
-		err                error
-		effects            []bool
+		subj            model.Item
+		domain          model.Item
+		object          model.Item
+		ancestorsSubj   utils.IDSet
+		ancestorsDomain utils.IDSet
+		ancestorsObject utils.IDSet
+		assigns         []model.Assignment
+		perms           []model.Permission
+		err             error
+		effects         []bool
 	)
 
 	idb.OpenConnection()
@@ -153,36 +99,34 @@ func Enforce(
 
 	// Step 2 : get Ancestors
 
-	ancestorsSubj, err = getAncestorOf(idb, subj)
+	ancestorsSubj, err = getAncestorOf(idb, false, subj.Name, subj.Type)
 
 	if err != nil {
 		return false, err
 	}
 
-	ancestorsDomain, err = getAncestorOf(idb, domain)
+	ancestorsDomain, err = getAncestorOf(idb, false, domain.Name, domain.Type)
 
 	if err != nil {
 		return false, err
 	}
 
-	ancestorsDomainSet = utils.NewIDSetFromSlice(ancestorsDomain)
-
-	ancestorsObject, err = getAncestorOf(idb, object)
+	ancestorsObject, err = getAncestorOf(idb, false, object.Name, object.Type)
 
 	if err != nil {
 		return false, err
 	}
 
-	fmt.Printf("len ancestors subj %d\n", len(ancestorsSubj))
+	fmt.Printf("len ancestors subj %d\n", ancestorsSubj.Size())
 	fmt.Println(ancestorsSubj)
-	fmt.Printf("len ancestors domain %d\n", len(ancestorsDomain))
+	fmt.Printf("len ancestors domain %d\n", ancestorsDomain.Size())
 	fmt.Println(ancestorsDomain)
-	fmt.Printf("len ancestors objects %d\n", len(ancestorsObject))
+	fmt.Printf("len ancestors objects %d\n", ancestorsObject.Size())
 	fmt.Println(ancestorsObject)
 
 	// Step 3 : getAssignments
 
-	assigns, err = getWantedAssignments(idb, ancestorsSubj)
+	assigns, err = getWantedAssignments(idb, ancestorsSubj.ToSlice())
 
 	if err != nil {
 		return false, err
@@ -192,7 +136,7 @@ func Enforce(
 
 	// Step 4 : getPermissions for given action
 
-	perms, err = getWantedPermission(idb, ancestorsObject, action)
+	perms, err = getWantedPermission(idb, ancestorsObject.ToSlice(), action)
 
 	if err != nil {
 		return false, err
@@ -211,7 +155,7 @@ func Enforce(
 				continue
 			}
 
-			if ancestorsDomainSet.Contains(assign.IDDomain) && ancestorsDomainSet.Contains(perm.IDDomain) {
+			if ancestorsDomain.Contains(assign.IDDomain) && ancestorsDomain.Contains(perm.IDDomain) {
 				effects = append(effects, perm.Effect)
 			}
 		}
