@@ -11,6 +11,7 @@ before_script:
     - 'ln -s ${PWD} ${GOPATH}/src/iam'
 
     # Get all depedencies
+    - 'go get -u github.com/jinzhu/gorm@master'
     - 'go get -d -v ./...'
 
 stages:
