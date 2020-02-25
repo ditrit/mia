@@ -3,7 +3,7 @@
 all: build
 
 .PHONY: ci
-ci: build gofmt golangci test coverage
+ci: build gofmt govet golangci test coverage
 
 .PHONY: build
 build:
@@ -12,6 +12,10 @@ build:
 .PHONY: gofmt
 gofmt:
 	gofmt -l .
+
+.PHONY: govet
+govet:
+	go vet -x -all ./...
 
 .PHONY: golangci
 golangci:

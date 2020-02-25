@@ -29,6 +29,11 @@ go_fmt:
     script:
         - 'make gofmt'
 
+go_vet:
+    stage: Lint
+    script:
+        - 'make govet'
+
 golangci-lint:
     stage: Lint
     script:
