@@ -97,6 +97,12 @@ func TestRenameDomain(t *testing.T) {
 	if err == nil {
 		t.Errorf("rename should have failed cause new name is empty")
 	}
+
+	err = iam.RenameDomain("gwen", "new fan")
+
+	if err == nil {
+		t.Errorf("rename should have failed user existed")
+	}
 }
 
 func TestAddDomainLink(t *testing.T) {

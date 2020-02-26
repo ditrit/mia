@@ -96,6 +96,12 @@ func TestRenameObject(t *testing.T) {
 	if err == nil {
 		t.Errorf("rename should have failed cause new name is empty")
 	}
+
+	err = iam.RenameObject("gwen", "new fan")
+
+	if err == nil {
+		t.Errorf("rename should have failed user existed")
+	}
 }
 
 func TestAddObjectLink(t *testing.T) {

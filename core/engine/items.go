@@ -196,6 +196,7 @@ func RemoveItem(
 // returns an error if :
 //	- the item does not exist in the iam
 //	- the new name given is empty
+//	- the newName is already taken by another item of same type
 func RenameItem(
 	idb database.IAMDatabase,
 	haveToOpenConnection bool,
@@ -211,7 +212,22 @@ func RenameItem(
 		return err
 	}
 
-	_, err = askDBForItems(idb, name, iType, haveToOpenConnection,
+	if haveToOpenConnection {
+		idb.OpenConnection()
+		defer idb.CloseConnection() //nolint: errcheck
+	}
+
+	existed, err := IsItemExists(idb, false, iType, newName)
+
+	if err != nil {
+		return err
+	}
+
+	if existed {
+		return errors.New("the name is already in use")
+	}
+
+	_, err = askDBForItems(idb, name, iType, false,
 		func(db *gorm.DB, qs model.Item) (model.Item, error) {
 			res := db.Model(&subj).Update("name", newName)
 			return qs, res.Error
@@ -350,6 +366,36 @@ func GetItem(
 		func(db *gorm.DB, qs model.Item) (model.Item, error) {
 			return qs, errors.New("the item does not exist in the iam")
 		})
+}
+
+// IsItemExists :
+// returns if the item exists
+// returns an error only if it's exceptionnal
+func IsItemExists(
+	idb database.IAMDatabase,
+	haveToOpenConnection bool,
+	iType model.ItemType,
+	name string,
+) (bool, error) {
+	notFoundErr := errors.New("the item doesn't exist")
+
+	_, err := askDBForItems(idb, name, iType, haveToOpenConnection,
+		func(db *gorm.DB, qs model.Item) (model.Item, error) {
+			return qs, db.Error
+		},
+		func(db *gorm.DB, qs model.Item) (model.Item, error) {
+			return qs, notFoundErr
+		})
+
+	if err == nil {
+		return true, nil
+	}
+
+	if err == notFoundErr {
+		return false, nil
+	}
+
+	return false, err
 }
 
 // GetItemArchitecture :
