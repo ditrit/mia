@@ -91,7 +91,12 @@ func askDBForItemLinks(
 		return err
 	}
 
-	res := idb.DB().Where("id_parent = ?", parentDB.ID).Where("id_child = ?", childDB.ID).Take(&sLink)
+	tx := idb.DB()
+	tx = tx.Where("type = ?", iType)
+	tx = tx.Where("id_parent = ?", parentDB.ID)
+	tx = tx.Where("id_child = ?", childDB.ID)
+
+	res := tx.Take(&sLink)
 	if res.Error != nil && !res.RecordNotFound() {
 		return res.Error
 	}
@@ -253,7 +258,7 @@ func AddItemLink(
 		return err
 	}
 
-	ancestorsParent, err := getAncestorOf(idb, false, nameParent, iType)
+	ancestorsParent, err := getAncestorOf(idb, false, iType, nameParent)
 
 	if err != nil {
 		return err
@@ -279,15 +284,52 @@ func RemoveItemLink(
 	nameParent string,
 	nameChild string,
 ) error {
-	return askDBForItemLinks(idb, nameParent, nameChild, iType, haveToOpenConnection,
+	if haveToOpenConnection {
+		idb.OpenConnection()
+		defer idb.CloseConnection() //nolint: errcheck
+	}
+
+	var candLink model.ItemLink
+
+	err := askDBForItemLinks(idb, nameParent, nameChild, iType, false,
 		func(db *gorm.DB, qs model.ItemLink) error {
-			res := db.Delete(&qs)
-			return res.Error
+			candLink = qs
+			return nil
 		},
 		func(db *gorm.DB, qs model.ItemLink) error {
 			return errors.New("the connection link does not exist")
 		},
 	)
+
+	if err != nil {
+		return err
+	}
+
+	ancestorsChildWithoutLink, err := getAncestorOfIgnoringParent(idb, false, iType, nameChild, nameParent)
+
+	if err != nil {
+		return err
+	}
+
+	rootName, _ := model.GetRootNameWithType(iType)
+	root, err := GetItem(idb, false, iType, rootName)
+
+	if err != nil {
+		return err
+	}
+
+	if !ancestorsChildWithoutLink.Contains(root.ID) {
+		return errors.New("deleting this relationship will break the connectivity law")
+	}
+
+	tx := idb.DB()
+	tx = tx.Where("type = ?", iType)
+	tx = tx.Where("id_parent = ?", candLink.IDParent)
+	tx = tx.Where("id_child = ?", candLink.IDChild)
+
+	res := tx.Delete(&candLink)
+
+	return res.Error
 }
 
 // GetItem :

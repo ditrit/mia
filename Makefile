@@ -15,7 +15,7 @@ gofmt:
 
 .PHONY: govet
 govet:
-	go vet -x -all ./...
+	go vet -all ./...
 
 .PHONY: golangci
 golangci:

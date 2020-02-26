@@ -99,19 +99,19 @@ func Enforce(
 
 	// Step 2 : get Ancestors
 
-	ancestorsSubj, err = getAncestorOf(idb, false, subj.Name, subj.Type)
+	ancestorsSubj, err = getAncestorOf(idb, false, subj.Type, subj.Name)
 
 	if err != nil {
 		return false, err
 	}
 
-	ancestorsDomain, err = getAncestorOf(idb, false, domain.Name, domain.Type)
+	ancestorsDomain, err = getAncestorOf(idb, false, domain.Type, domain.Name)
 
 	if err != nil {
 		return false, err
 	}
 
-	ancestorsObject, err = getAncestorOf(idb, false, object.Name, object.Type)
+	ancestorsObject, err = getAncestorOf(idb, false, object.Type, object.Name)
 
 	if err != nil {
 		return false, err

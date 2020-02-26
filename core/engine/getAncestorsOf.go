@@ -9,13 +9,13 @@ import (
 	"iam/core/utils"
 )
 
-//nolint: unparam
-// remove this above if haveToOpenConnection is needed
-func getAncestorOf(
+//nolint: funlen, gocyclo
+func _getAncestorOf(
 	idb database.IAMDatabase,
 	haveToOpenConnection bool,
-	itemName string,
 	iType model.ItemType,
+	itemName string,
+	itemNameParent *string,
 ) (utils.IDSet, error) {
 	resSet := utils.NewIDSet()
 	vertices, parentTable, err := GetItemArchitecture(idb, false, iType)
@@ -63,6 +63,10 @@ func getAncestorOf(
 		for index := range parentTable[key] {
 			name := parentTable[key][index].Name
 
+			if itemNameParent != nil && key == itemName && name == *itemNameParent {
+				continue
+			}
+
 			if !alreadyVisited.Contains(name) {
 				setToVisit.Add(name)
 				alreadyVisited.Add(name)
@@ -71,4 +75,25 @@ func getAncestorOf(
 	}
 
 	return resSet, nil
+}
+
+//nolint: unparam
+// remove this above if haveToOpenConnection is needed
+func getAncestorOf(
+	idb database.IAMDatabase,
+	haveToOpenConnection bool,
+	iType model.ItemType,
+	itemName string,
+) (utils.IDSet, error) {
+	return _getAncestorOf(idb, haveToOpenConnection, iType, itemName, nil)
+}
+
+func getAncestorOfIgnoringParent(
+	idb database.IAMDatabase,
+	haveToOpenConnection bool,
+	iType model.ItemType,
+	itemName string,
+	itemNameParent string,
+) (utils.IDSet, error) {
+	return _getAncestorOf(idb, haveToOpenConnection, iType, itemName, &itemNameParent)
 }
