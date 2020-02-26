@@ -21,10 +21,11 @@ ToDo List iam:
 		☐ Delete en cascade
 		✔ rename check if name is available @done(20-02-26 15:50)
 
-	☐ hiérarchiser les droits pour les effets en fonction de la topologie pour les domaines (uniquement sur domaines aves les différentes branches)
-	☐ prévoir le enforce avec une date
+	Important:
+		☐ hiérarchiser les droits pour les effets en fonction de la topologie pour les domaines (uniquement sur domaines aves les différentes branches)
+		☐ prévoir le enforce avec une date
 
-ToDo Boring:
+ToDo Boring But Useful:
 	☐ Faire tous les todos in the code
 	☐ faire un affichage dot graphfiz
 	☐ Add A whole architecture

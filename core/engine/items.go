@@ -370,7 +370,7 @@ func GetItem(
 
 // IsItemExists :
 // returns if the item exists
-// returns an error only if it's exceptionnal
+// returns an error only if it's exceptional
 func IsItemExists(
 	idb database.IAMDatabase,
 	haveToOpenConnection bool,
