@@ -5,6 +5,7 @@ import (
 
 	"iam/core/constant"
 	"iam/core/model"
+	"iam/core/utils"
 )
 
 type link struct {
@@ -174,4 +175,8 @@ func TestArchitecture(t *testing.T) {
 	testEquity(t, subjects, subjectsLinks, model.ITEM_TYPE_SUBJ, subjVertices, subjParentTable)
 	testEquity(t, domains, domainLinks, model.ITEM_TYPE_DOMAIN, domainVertices, domainParentTable)
 	testEquity(t, objects, objectLinks, model.ITEM_TYPE_OBJ, objectVertices, objectParentTable)
+
+	utils.PrintArchi(subjVertices, subjParentTable)
+	utils.PrintArchi(domainVertices, domainParentTable)
+	utils.PrintArchi(objectVertices, objectParentTable)
 }

@@ -17,7 +17,7 @@ ToDo List iam:
 		✔ faire des items qui englobent le reste @done(20-02-24 11:38)
 		✔ Cannot delete the default domain @done(20-02-24 15:03)
 		✔ Vérifier si à l'ajout d'une arête on reste sur un DAG @done(20-02-25 14:17)
-		☐ Vérifier si à l'enlèvement d'une arête on reste sur un DAG
+		✔ Vérifier si à l'enlèvement d'une arête on reste sur un DAG @done(20-02-26 15:32)
 		☐ Delete en cascade
 		☐ rename check if name is available
 
