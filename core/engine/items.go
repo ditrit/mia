@@ -44,6 +44,7 @@ func askDBForItems(
 }
 
 // use this function to have the benefit of abstraction and closures
+//nolint: funlen
 func askDBForItemLinks(
 	idb database.IAMDatabase,
 	parentName string,
