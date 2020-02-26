@@ -10,6 +10,8 @@ ToDo List iam:
 
 	Informations Needed:
 		☐ Vérifier que si un item est enlevé, ça casse pas des liens, mais pas les assignation et les permissions
+		✔ Vérifier si à l'enlèvement d'une arête on reste sur un DAG @done(20-02-26 15:32)
+		☐ Delete en cascade
 
 	Easy:
 		✔ remplacer les effects par les booléens @done(20-02-24 10:56)
@@ -17,8 +19,6 @@ ToDo List iam:
 		✔ faire des items qui englobent le reste @done(20-02-24 11:38)
 		✔ Cannot delete the default domain @done(20-02-24 15:03)
 		✔ Vérifier si à l'ajout d'une arête on reste sur un DAG @done(20-02-25 14:17)
-		✔ Vérifier si à l'enlèvement d'une arête on reste sur un DAG @done(20-02-26 15:32)
-		☐ Delete en cascade
 		✔ rename check if name is available @done(20-02-26 15:50)
 
 	Important:
@@ -29,4 +29,4 @@ ToDo Boring But Useful:
 	☐ Faire tous les todos in the code
 	☐ faire un affichage dot graphfiz
 	☐ Add A whole architecture
-	☐ utiliser les transactions
+	☐ utiliser les transactions database
