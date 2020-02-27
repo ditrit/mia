@@ -1,0 +1,54 @@
+---
+image: 'ditrit/gandalf-min'
+
+before_script:
+    - 'go version'
+
+    # Setup project environment
+    - '# DELETE SYMLINK IF EXIST'
+    - '! test -f ${GOPATH}/src/iam || rm -f ${GOPATH}/src/iam'
+    - '# SETUP SYMLINK TO MAKE GO WORK PROPERLY'
+    - 'ln -s ${PWD} ${GOPATH}/src/iam'
+
+    # Get all depedencies
+    - 'go get -d -v ./...'
+
+stages:
+    - Build
+    - Lint
+    - Test
+    - TestCoverage
+
+build:
+    stage: Build
+    script:
+        - 'make build'
+
+go_fmt:
+    stage: Lint
+    script:
+        - 'make gofmt'
+
+go_vet:
+    stage: Lint
+    script:
+        - 'make govet'
+
+golangci-lint:
+    stage: Lint
+    script:
+        - 'curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.23.3'
+        - 'golangci-lint --version'
+        - 'make golangci'
+
+go_test:
+    stage: Test
+    script:
+        - 'make test'
+
+go_coverage:
+    stage: TestCoverage
+    script:
+        - 'make coverage'
+
+...
