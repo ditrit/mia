@@ -4,14 +4,14 @@ package engine
 
 import (
 	"fmt"
-	"iam/core/constant"
-	"iam/core/database"
-	"iam/core/model"
-	"iam/core/utils"
+	"mia/core/constant"
+	"mia/core/database"
+	"mia/core/model"
+	"mia/core/utils"
 )
 
 func getWantedAssignments(
-	idb database.IAMDatabase,
+	idb database.MIADatabase,
 	subjectIDs []uint64,
 ) ([]model.Assignment, error) {
 	var assigns []model.Assignment
@@ -28,7 +28,7 @@ func getWantedAssignments(
 }
 
 func getWantedPermission(
-	idb database.IAMDatabase,
+	idb database.MIADatabase,
 	objectsIDs []uint64,
 	act constant.Action,
 ) ([]model.Permission, error) {
@@ -51,7 +51,7 @@ func getWantedPermission(
 // the enforce function resolves if a subject can execute an action on an object in a given context
 // nolint: funlen, gocyclo
 func Enforce(
-	idb database.IAMDatabase,
+	idb database.MIADatabase,
 	subjectName string,
 	domainName string,
 	objectName string,

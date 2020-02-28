@@ -12,29 +12,29 @@ func TestAssignment(t *testing.T) {
 		domainName string = "Gandalf"
 	)
 
-	_ = iam.AddRole(roleName)
-	_ = iam.AddSubjectToRoot(subjName)
-	_ = iam.AddDomainToRoot(domainName)
+	_ = mia.AddRole(roleName)
+	_ = mia.AddSubjectToRoot(subjName)
+	_ = mia.AddDomainToRoot(domainName)
 
-	err := iam.RemoveAssignment(roleName, subjName, domainName)
+	err := mia.RemoveAssignment(roleName, subjName, domainName)
 
 	if err == nil {
 		t.Errorf("remove assignment that doesn't exist shouldn't work")
 	}
 
-	err = iam.AddAssignment(roleName, subjName, domainName)
+	err = mia.AddAssignment(roleName, subjName, domainName)
 
 	if err != nil {
 		t.Errorf("should have added the assignment")
 	}
 
-	err = iam.AddAssignment(roleName, subjName, domainName)
+	err = mia.AddAssignment(roleName, subjName, domainName)
 
 	if err == nil {
 		t.Errorf("should have failed cause it's already exists")
 	}
 
-	err = iam.RemoveAssignment(roleName, subjName, domainName)
+	err = mia.RemoveAssignment(roleName, subjName, domainName)
 
 	if err != nil {
 		t.Errorf("should have removed the assignment")

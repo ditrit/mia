@@ -5,7 +5,7 @@ import (
 )
 
 func TestGetDomainUnknown(t *testing.T) {
-	_, err := iam.GetDomain("alice")
+	_, err := mia.GetDomain("alice")
 	if err == nil {
 		t.Errorf("get unknown shouldn't work")
 	}
@@ -13,13 +13,13 @@ func TestGetDomainUnknown(t *testing.T) {
 
 //nolint: goconst
 func TestAddDomain(t *testing.T) {
-	err := iam.AddDomainToRoot("bobby")
+	err := mia.AddDomainToRoot("bobby")
 
 	if err != nil {
 		t.Errorf("add should work : %s", err.Error())
 	}
 
-	subj, err := iam.GetDomain("bobby")
+	subj, err := mia.GetDomain("bobby")
 	if err != nil {
 		t.Errorf("get should work : %s", err.Error())
 	}
@@ -28,23 +28,23 @@ func TestAddDomain(t *testing.T) {
 		t.Errorf("name is not the same")
 	}
 
-	err = iam.AddDomainToRoot("")
+	err = mia.AddDomainToRoot("")
 
 	if err == nil {
 		t.Errorf("should not add an empty Domain")
 	}
 
-	err = iam.AddDomainToRoot("bobby")
+	err = mia.AddDomainToRoot("bobby")
 
 	if err == nil {
 		t.Errorf("should not add a Domain that's already existe")
 	}
 
-	_ = iam.AddDomainToRoot("alice")
-	_ = iam.AddDomainToRoot("carole")
-	_ = iam.AddDomainToRoot("david")
+	_ = mia.AddDomainToRoot("alice")
+	_ = mia.AddDomainToRoot("carole")
+	_ = mia.AddDomainToRoot("david")
 
-	subj, err = iam.GetDomain("alice")
+	subj, err = mia.GetDomain("alice")
 	if err != nil {
 		t.Errorf("get should work : %s", err.Error())
 	}
@@ -55,50 +55,50 @@ func TestAddDomain(t *testing.T) {
 }
 
 func TestRemoveDomain(t *testing.T) {
-	_ = iam.AddDomainToRoot("elodie")
+	_ = mia.AddDomainToRoot("elodie")
 
-	err := iam.RemoveDomain("elodie")
+	err := mia.RemoveDomain("elodie")
 	if err != nil {
 		t.Errorf("remove should work : %s", err.Error())
 	}
 
-	err = iam.RemoveDomain("engie")
+	err = mia.RemoveDomain("engie")
 	if err == nil {
-		t.Errorf("remove should failed, engie is not in iam")
+		t.Errorf("remove should failed, engie is not in mia")
 	}
 }
 
 func TestRenameDomain(t *testing.T) {
-	_ = iam.AddDomainToRoot("fan")
-	_ = iam.AddDomainToRoot("gwen")
+	_ = mia.AddDomainToRoot("fan")
+	_ = mia.AddDomainToRoot("gwen")
 
-	fanFromDB1, _ := iam.GetDomain("fan")
+	fanFromDB1, _ := mia.GetDomain("fan")
 
-	err := iam.RenameDomain("fan", "new fan")
+	err := mia.RenameDomain("fan", "new fan")
 
 	if err != nil {
 		t.Errorf("rename should work : %s", err.Error())
 	}
 
-	fanFromDB2, _ := iam.GetDomain("new fan")
+	fanFromDB2, _ := mia.GetDomain("new fan")
 
 	if fanFromDB1.ID != fanFromDB2.ID {
 		t.Errorf("rename should not change IDs")
 	}
 
-	err = iam.RenameDomain("folie", "try try")
+	err = mia.RenameDomain("folie", "try try")
 
 	if err == nil {
 		t.Errorf("rename non existing Domain should have failed")
 	}
 
-	err = iam.RenameDomain("gwen", "")
+	err = mia.RenameDomain("gwen", "")
 
 	if err == nil {
 		t.Errorf("rename should have failed cause new name is empty")
 	}
 
-	err = iam.RenameDomain("gwen", "new fan")
+	err = mia.RenameDomain("gwen", "new fan")
 
 	if err == nil {
 		t.Errorf("rename should have failed user existed")
@@ -106,22 +106,22 @@ func TestRenameDomain(t *testing.T) {
 }
 
 func TestAddDomainLink(t *testing.T) {
-	_ = iam.AddDomainToRoot("helene")
-	_ = iam.AddDomainToRoot("ismail")
+	_ = mia.AddDomainToRoot("helene")
+	_ = mia.AddDomainToRoot("ismail")
 
-	err := iam.AddDomainLink("helene", "ismail")
+	err := mia.AddDomainLink("helene", "ismail")
 
 	if err != nil {
 		t.Errorf("add Domain link should work : %s", err.Error())
 	}
 
-	err = iam.AddDomainLink("ismail", "joseph")
+	err = mia.AddDomainLink("ismail", "joseph")
 
 	if err == nil {
-		t.Errorf("add Domain link shouldn't work cause joseph not in iam")
+		t.Errorf("add Domain link shouldn't work cause joseph not in mia")
 	}
 
-	err = iam.AddDomainLink("helene", "ismail")
+	err = mia.AddDomainLink("helene", "ismail")
 
 	if err == nil {
 		t.Errorf("add Domain link shouldn't work cause Domain link already exist")
@@ -129,18 +129,18 @@ func TestAddDomainLink(t *testing.T) {
 }
 
 func TestRemoveDomainLink(t *testing.T) {
-	_ = iam.AddDomainToRoot("kevin")
-	_ = iam.AddDomainToRoot("laure")
+	_ = mia.AddDomainToRoot("kevin")
+	_ = mia.AddDomainToRoot("laure")
 
-	_ = iam.AddDomainLink("kevin", "laure")
+	_ = mia.AddDomainLink("kevin", "laure")
 
-	err := iam.RemoveDomainLink("kevin", "laure")
+	err := mia.RemoveDomainLink("kevin", "laure")
 
 	if err != nil {
 		t.Errorf("remove Domain link should have worked")
 	}
 
-	err = iam.RemoveDomainLink("laure", "maude")
+	err = mia.RemoveDomainLink("laure", "maude")
 
 	if err == nil {
 		t.Errorf("remove Domain link should have failed cause it doesn't exist")

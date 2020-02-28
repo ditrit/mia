@@ -1,18 +1,18 @@
 // Package engine :
-// Handling roles queries from IAM
+// Handling roles queries from MIA
 package engine
 
 import (
 	"errors"
-	"iam/core/database"
-	"iam/core/model"
+	"mia/core/database"
+	"mia/core/model"
 
 	"github.com/jinzhu/gorm"
 )
 
 // use this function to have the benefir of abstraction and closures
 func askDBForRoles(
-	idb database.IAMDatabase,
+	idb database.MIADatabase,
 	name string,
 	haveToOpenConnection bool,
 	fIfFound func(*gorm.DB, model.Role) (model.Role, error),
@@ -39,12 +39,12 @@ func askDBForRoles(
 }
 
 //AddRole :
-// add role in the IAM
+// add role in the MIA
 // returns an error if :
 //	- the role already exists
 //	- the name is not conform
 func AddRole(
-	idb database.IAMDatabase,
+	idb database.MIADatabase,
 	haveToOpenConnection bool,
 	name string,
 ) error {
@@ -69,12 +69,12 @@ func AddRole(
 }
 
 //RemoveRole :
-// remove role in the IAM
+// remove role in the MIA
 // returns an error if :
-//	- the role does not exist in the iam
+//	- the role does not exist in the mia
 //	- the role is present in a assignment TODO
 func RemoveRole(
-	idb database.IAMDatabase,
+	idb database.MIADatabase,
 	haveToOpenConnection bool,
 	name string,
 ) error {
@@ -98,11 +98,11 @@ func RemoveRole(
 }
 
 // GetRole :
-// get role in the IAM
+// get role in the MIA
 // returns an error if :
-//	- the role does not exist in the iam
+//	- the role does not exist in the mia
 func GetRole(
-	idb database.IAMDatabase,
+	idb database.MIADatabase,
 	haveToOpenConnection bool,
 	name string,
 ) (model.Role, error) {
@@ -121,7 +121,7 @@ func GetRole(
 // returns an error if :
 //	- a strange error occurred
 func IsRoleExists(
-	idb database.IAMDatabase,
+	idb database.MIADatabase,
 	haveToOpenConnection bool,
 	name string,
 ) (bool, error) {
@@ -148,9 +148,9 @@ func IsRoleExists(
 }
 
 // GetAllRoles :
-// returns all roles in the IAM
+// returns all roles in the MIA
 func GetAllRoles(
-	idb database.IAMDatabase,
+	idb database.MIADatabase,
 	haveToOpenConnection bool,
 ) ([]string, error) {
 	var roles []model.Role

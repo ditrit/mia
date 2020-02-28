@@ -1,18 +1,18 @@
 // Package engine :
-// Handling items queries from IAM
+// Handling items queries from MIA
 package engine
 
 import (
 	"errors"
-	"iam/core/database"
-	"iam/core/model"
+	"mia/core/database"
+	"mia/core/model"
 
 	"github.com/jinzhu/gorm"
 )
 
 // use this function to have the benefit of abstraction and closures
 func askDBForItems(
-	idb database.IAMDatabase,
+	idb database.MIADatabase,
 	name string,
 	iType model.ItemType,
 	haveToOpenConnection bool,
@@ -46,7 +46,7 @@ func askDBForItems(
 // use this function to have the benefit of abstraction and closures
 //nolint: funlen
 func askDBForItemLinks(
-	idb database.IAMDatabase,
+	idb database.MIADatabase,
 	parentName string,
 	childName string,
 	iType model.ItemType,
@@ -72,7 +72,7 @@ func askDBForItemLinks(
 			return qs, db.Error
 		},
 		func(db *gorm.DB, qs model.Item) (model.Item, error) {
-			return qs, errors.New("the parent item does not exist in the iam")
+			return qs, errors.New("the parent item does not exist in the mia")
 		})
 
 	if err != nil {
@@ -85,7 +85,7 @@ func askDBForItemLinks(
 			return qs, db.Error
 		},
 		func(db *gorm.DB, qs model.Item) (model.Item, error) {
-			return qs, errors.New("the child item does not exist in the iam")
+			return qs, errors.New("the child item does not exist in the mia")
 		})
 
 	if err != nil {
@@ -114,12 +114,12 @@ func askDBForItemLinks(
 }
 
 // AddItem :
-// add item in the IAM
+// add item in the MIA
 // returns an error if :
-//	- the item already exists in the iam
+//	- the item already exists in the mia
 //	- the item has an empty name
 func AddItem(
-	idb database.IAMDatabase,
+	idb database.MIADatabase,
 	haveToOpenConnection bool,
 	iType model.ItemType,
 	name string,
@@ -144,7 +144,7 @@ func AddItem(
 
 	_, err = askDBForItems(idb, name, iType, false,
 		func(_ *gorm.DB, qs model.Item) (model.Item, error) {
-			return qs, errors.New("the item already exists in the iam")
+			return qs, errors.New("the item already exists in the mia")
 		},
 		func(db *gorm.DB, qs model.Item) (model.Item, error) {
 			db.Error = nil
@@ -162,13 +162,13 @@ func AddItem(
 }
 
 // RemoveItem :
-// remove item in the IAM
+// remove item in the MIA
 // returns an error if :
-//	- the item does not exist in the iam
+//	- the item does not exist in the mia
 //	- the item is a parent or a child in ItemLinks TODO
 //	- the item is present in an assignation or a permission TODO
 func RemoveItem(
-	idb database.IAMDatabase,
+	idb database.MIADatabase,
 	haveToOpenConnection bool,
 	iType model.ItemType,
 	name string,
@@ -185,20 +185,20 @@ func RemoveItem(
 			return qs, res.Error
 		},
 		func(db *gorm.DB, qs model.Item) (model.Item, error) {
-			return qs, errors.New("the item does not exist in the iam")
+			return qs, errors.New("the item does not exist in the mia")
 		})
 
 	return err
 }
 
 // RenameItem :
-// rename item in the IAM
+// rename item in the MIA
 // returns an error if :
-//	- the item does not exist in the iam
+//	- the item does not exist in the mia
 //	- the new name given is empty
 //	- the newName is already taken by another item of same type
 func RenameItem(
-	idb database.IAMDatabase,
+	idb database.MIADatabase,
 	haveToOpenConnection bool,
 	iType model.ItemType,
 	name string,
@@ -233,20 +233,20 @@ func RenameItem(
 			return qs, res.Error
 		},
 		func(db *gorm.DB, qs model.Item) (model.Item, error) {
-			return qs, errors.New("the item does not exist in the iam")
+			return qs, errors.New("the item does not exist in the mia")
 		})
 
 	return err
 }
 
 // AddItemLink :
-// add a relation between two items in the IAM
+// add a relation between two items in the MIA
 // returns an error if :
-//	- one of the items does not exists in the iam
+//	- one of the items does not exists in the mia
 //	- the link already exists
 //	- the architecture breaks the DAG property
 func AddItemLink(
-	idb database.IAMDatabase,
+	idb database.MIADatabase,
 	haveToOpenConnection bool,
 	iType model.ItemType,
 	nameParent string,
@@ -291,11 +291,11 @@ func AddItemLink(
 }
 
 // RemoveItemLink :
-// remove a relation between two items in the IAM
+// remove a relation between two items in the MIA
 // returns an error if :
 //	- the link does not exist
 func RemoveItemLink(
-	idb database.IAMDatabase,
+	idb database.MIADatabase,
 	haveToOpenConnection bool,
 	iType model.ItemType,
 	nameParent string,
@@ -350,11 +350,11 @@ func RemoveItemLink(
 }
 
 // GetItem :
-// get item in the IAM
+// get item in the MIA
 // returns an error if :
-//	- the item does not exist in the iam
+//	- the item does not exist in the mia
 func GetItem(
-	idb database.IAMDatabase,
+	idb database.MIADatabase,
 	haveToOpenConnection bool,
 	iType model.ItemType,
 	name string,
@@ -364,7 +364,7 @@ func GetItem(
 			return qs, db.Error
 		},
 		func(db *gorm.DB, qs model.Item) (model.Item, error) {
-			return qs, errors.New("the item does not exist in the iam")
+			return qs, errors.New("the item does not exist in the mia")
 		})
 }
 
@@ -372,7 +372,7 @@ func GetItem(
 // returns if the item exists
 // returns an error only if it's exceptional
 func IsItemExists(
-	idb database.IAMDatabase,
+	idb database.MIADatabase,
 	haveToOpenConnection bool,
 	iType model.ItemType,
 	name string,
@@ -405,7 +405,7 @@ func IsItemExists(
 //	- map[string][]model.Item, list of edges, the key is the child, and the list are the list of parents
 //	- error, error if any
 func GetItemArchitecture(
-	idb database.IAMDatabase,
+	idb database.MIADatabase,
 	haveToOpenConnection bool,
 	iType model.ItemType,
 ) ([]model.Item, map[string][]model.Item, error) {
@@ -456,7 +456,7 @@ func GetItemArchitecture(
 //	- map[string][]string, list of edges, the key is the child, and the list are the list of parents
 //	- error, error if any
 func GetItemArchitectureNameOnly(
-	idb database.IAMDatabase,
+	idb database.MIADatabase,
 	haveToOpenConnection bool,
 	iType model.ItemType,
 ) ([]string, map[string][]string, error) {
@@ -488,15 +488,15 @@ func GetItemArchitectureNameOnly(
 
 // TODO implement a function that add a whole architecture
 // AddItemArchitecture :
-// add an architecture to the IAM
+// add an architecture to the MIA
 // returns an error if :
 //	- tabs given have not the same size
-//	- one of the items already exists in the iam
+//	- one of the items already exists in the mia
 //	- one of the items has an empty name
 //	- one of the links alrady exists
 // We can ignore some of this error with the other parameters
 // func AddItemArchitecture(
-// 	idb database.IAMDatabase,
+// 	idb database.MIADatabase,
 // 	haveToOpenConnection bool,
 // 	iType model.ItemType,
 // 	parents []string,

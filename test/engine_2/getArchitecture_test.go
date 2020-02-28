@@ -3,9 +3,9 @@ package engine_test
 import (
 	"testing"
 
-	"iam/core/constant"
-	"iam/core/model"
-	"iam/core/utils"
+	"mia/core/constant"
+	"mia/core/model"
+	"mia/core/utils"
 )
 
 type link struct {
@@ -132,44 +132,44 @@ func TestArchitecture(t *testing.T) {
 
 	for _, link := range subjectsLinks {
 		if link.parent == constant.ROOT_SUBJECTS {
-			_ = iam.AddSubjectToRoot(link.child)
+			_ = mia.AddSubjectToRoot(link.child)
 		} else {
-			_ = iam.AddSubject(link.child, link.parent)
+			_ = mia.AddSubject(link.child, link.parent)
 		}
 	}
 
 	for _, link := range domainLinks {
 		if link.parent == constant.ROOT_DOMAINS {
-			_ = iam.AddDomainToRoot(link.child)
+			_ = mia.AddDomainToRoot(link.child)
 		} else {
-			_ = iam.AddDomain(link.child, link.parent)
+			_ = mia.AddDomain(link.child, link.parent)
 		}
 	}
 
 	for _, link := range objectLinks {
 		if link.parent == constant.ROOT_OBJECTS {
-			_ = iam.AddObjectToRoot(link.child)
+			_ = mia.AddObjectToRoot(link.child)
 		} else {
-			_ = iam.AddObject(link.child, link.parent)
+			_ = mia.AddObject(link.child, link.parent)
 		}
 	}
 
-	subjVertices, subjParentTable, err := iam.GetSubjectArchitecture()
+	subjVertices, subjParentTable, err := mia.GetSubjectArchitecture()
 
 	if err != nil {
-		t.Errorf("iam.GetSubjectArchitecture should work")
+		t.Errorf("mia.GetSubjectArchitecture should work")
 	}
 
-	domainVertices, domainParentTable, err := iam.GetDomainArchitecture()
+	domainVertices, domainParentTable, err := mia.GetDomainArchitecture()
 
 	if err != nil {
-		t.Errorf("iam.GetDomainArchitecture should work")
+		t.Errorf("mia.GetDomainArchitecture should work")
 	}
 
-	objectVertices, objectParentTable, err := iam.GetObjectArchitecture()
+	objectVertices, objectParentTable, err := mia.GetObjectArchitecture()
 
 	if err != nil {
-		t.Errorf("iam.GetObjectArchitecture should work")
+		t.Errorf("mia.GetObjectArchitecture should work")
 	}
 
 	testEquity(t, subjects, subjectsLinks, model.ITEM_TYPE_SUBJ, subjVertices, subjParentTable)

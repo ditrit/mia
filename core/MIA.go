@@ -3,27 +3,27 @@
 package core
 
 import (
-	"iam/core/constant"
-	"iam/core/database"
-	"iam/core/engine"
-	"iam/core/model"
+	"mia/core/constant"
+	"mia/core/database"
+	"mia/core/engine"
+	"mia/core/model"
 )
 
-// IAM :
+// MIA :
 // The abstract struct that users will work with
-type IAM struct {
-	idb database.IAMDatabase
+type MIA struct {
+	idb database.MIADatabase
 }
 
 //	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//
 //	//							INITIALIZERS							//	//
 //	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//
 
-// NewIAM :
-// Constructor : Declare a IAM Object
-func NewIAM(p string, dropTables bool) IAM {
-	res := IAM{
-		idb: database.NewIAMDatabase(p),
+// NewMIA :
+// Constructor : Declare a MIA Object
+func NewMIA(p string, dropTables bool) MIA {
+	res := MIA{
+		idb: database.NewMIADatabase(p),
 	}
 
 	res.idb.Setup(dropTables)
@@ -36,33 +36,33 @@ func NewIAM(p string, dropTables bool) IAM {
 //	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//
 
 // AddRole :
-// See details in iam/core/engine/roles.go
-func (iam IAM) AddRole(name string) error {
-	return engine.AddRole(iam.idb, true, name)
+// See details in mia/core/engine/roles.go
+func (mia MIA) AddRole(name string) error {
+	return engine.AddRole(mia.idb, true, name)
 }
 
 // RemoveRole :
-// See details in iam/core/engine/roles.go
-func (iam IAM) RemoveRole(name string) error {
-	return engine.RemoveRole(iam.idb, true, name)
+// See details in mia/core/engine/roles.go
+func (mia MIA) RemoveRole(name string) error {
+	return engine.RemoveRole(mia.idb, true, name)
 }
 
 // GetRole :
-// See details in iam/core/engine/roles.go
-func (iam IAM) GetRole(name string) (model.Role, error) {
-	return engine.GetRole(iam.idb, true, name)
+// See details in mia/core/engine/roles.go
+func (mia MIA) GetRole(name string) (model.Role, error) {
+	return engine.GetRole(mia.idb, true, name)
 }
 
 // IsRoleExists :
-// See details in iam/core/engine/roles.go
-func (iam IAM) IsRoleExists(name string) (bool, error) {
-	return engine.IsRoleExists(iam.idb, true, name)
+// See details in mia/core/engine/roles.go
+func (mia MIA) IsRoleExists(name string) (bool, error) {
+	return engine.IsRoleExists(mia.idb, true, name)
 }
 
 // GetAllRoles :
-// See details in iam/core/engine/roles.go
-func (iam IAM) GetAllRoles() ([]string, error) {
-	return engine.GetAllRoles(iam.idb, true)
+// See details in mia/core/engine/roles.go
+func (mia MIA) GetAllRoles() ([]string, error) {
+	return engine.GetAllRoles(mia.idb, true)
 }
 
 //	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//
@@ -70,10 +70,10 @@ func (iam IAM) GetAllRoles() ([]string, error) {
 //	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//
 
 // AddSubject :
-// See details in iam/core/engine/items.go
-func (iam IAM) AddSubject(name string, nameParent string) error {
+// See details in mia/core/engine/items.go
+func (mia MIA) AddSubject(name string, nameParent string) error {
 	return engine.AddItem(
-		iam.idb,
+		mia.idb,
 		true,
 		model.ITEM_TYPE_SUBJ,
 		name,
@@ -82,13 +82,13 @@ func (iam IAM) AddSubject(name string, nameParent string) error {
 }
 
 // AddSubjectToRoot :
-// See details in iam/core/engine/items.go
+// See details in mia/core/engine/items.go
 // add subject litteraly under roots
-func (iam IAM) AddSubjectToRoot(name string) error {
+func (mia MIA) AddSubjectToRoot(name string) error {
 	rootName, _ := model.GetRootNameWithType(model.ITEM_TYPE_SUBJ)
 
 	return engine.AddItem(
-		iam.idb,
+		mia.idb,
 		true,
 		model.ITEM_TYPE_SUBJ,
 		name,
@@ -97,10 +97,10 @@ func (iam IAM) AddSubjectToRoot(name string) error {
 }
 
 // RemoveSubject :
-// See details in iam/core/engine/items.go
-func (iam IAM) RemoveSubject(name string) error {
+// See details in mia/core/engine/items.go
+func (mia MIA) RemoveSubject(name string) error {
 	return engine.RemoveItem(
-		iam.idb,
+		mia.idb,
 		true,
 		model.ITEM_TYPE_SUBJ,
 		name,
@@ -108,10 +108,10 @@ func (iam IAM) RemoveSubject(name string) error {
 }
 
 // RenameSubject :
-// See details in iam/core/engine/items.go
-func (iam IAM) RenameSubject(name string, newName string) error {
+// See details in mia/core/engine/items.go
+func (mia MIA) RenameSubject(name string, newName string) error {
 	return engine.RenameItem(
-		iam.idb,
+		mia.idb,
 		true,
 		model.ITEM_TYPE_SUBJ,
 		name,
@@ -120,10 +120,10 @@ func (iam IAM) RenameSubject(name string, newName string) error {
 }
 
 // GetSubject :
-// See details in iam/core/engine/items.go
-func (iam IAM) GetSubject(name string) (model.Item, error) {
+// See details in mia/core/engine/items.go
+func (mia MIA) GetSubject(name string) (model.Item, error) {
 	return engine.GetItem(
-		iam.idb,
+		mia.idb,
 		true,
 		model.ITEM_TYPE_SUBJ,
 		name,
@@ -131,10 +131,10 @@ func (iam IAM) GetSubject(name string) (model.Item, error) {
 }
 
 // AddSubjectLink :
-// See details in iam/core/engine/items.go
-func (iam IAM) AddSubjectLink(nP string, nC string) error {
+// See details in mia/core/engine/items.go
+func (mia MIA) AddSubjectLink(nP string, nC string) error {
 	return engine.AddItemLink(
-		iam.idb,
+		mia.idb,
 		true,
 		model.ITEM_TYPE_SUBJ,
 		nP,
@@ -143,10 +143,10 @@ func (iam IAM) AddSubjectLink(nP string, nC string) error {
 }
 
 // RemoveSubjectLink :
-// See details in iam/core/engine/items.go
-func (iam IAM) RemoveSubjectLink(nP string, nC string) error {
+// See details in mia/core/engine/items.go
+func (mia MIA) RemoveSubjectLink(nP string, nC string) error {
 	return engine.RemoveItemLink(
-		iam.idb,
+		mia.idb,
 		true,
 		model.ITEM_TYPE_SUBJ,
 		nP,
@@ -155,9 +155,9 @@ func (iam IAM) RemoveSubjectLink(nP string, nC string) error {
 }
 
 // GetSubjectArchitecture :
-// See details in iam/core/engine/items.go
-func (iam IAM) GetSubjectArchitecture() ([]string, map[string][]string, error) {
-	return engine.GetItemArchitectureNameOnly(iam.idb, true, model.ITEM_TYPE_SUBJ)
+// See details in mia/core/engine/items.go
+func (mia MIA) GetSubjectArchitecture() ([]string, map[string][]string, error) {
+	return engine.GetItemArchitectureNameOnly(mia.idb, true, model.ITEM_TYPE_SUBJ)
 }
 
 //	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//
@@ -165,10 +165,10 @@ func (iam IAM) GetSubjectArchitecture() ([]string, map[string][]string, error) {
 //	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//
 
 // AddObject :
-// See details in iam/core/engine/items.go
-func (iam IAM) AddObject(name string, nameParent string) error {
+// See details in mia/core/engine/items.go
+func (mia MIA) AddObject(name string, nameParent string) error {
 	return engine.AddItem(
-		iam.idb,
+		mia.idb,
 		true,
 		model.ITEM_TYPE_OBJ,
 		name,
@@ -177,13 +177,13 @@ func (iam IAM) AddObject(name string, nameParent string) error {
 }
 
 // AddObjectToRoot :
-// See details in iam/core/engine/items.go
+// See details in mia/core/engine/items.go
 // add object litteraly under roots
-func (iam IAM) AddObjectToRoot(name string) error {
+func (mia MIA) AddObjectToRoot(name string) error {
 	rootName, _ := model.GetRootNameWithType(model.ITEM_TYPE_OBJ)
 
 	return engine.AddItem(
-		iam.idb,
+		mia.idb,
 		true,
 		model.ITEM_TYPE_OBJ,
 		name,
@@ -192,10 +192,10 @@ func (iam IAM) AddObjectToRoot(name string) error {
 }
 
 // RemoveObject :
-// See details in iam/core/engine/items.go
-func (iam IAM) RemoveObject(name string) error {
+// See details in mia/core/engine/items.go
+func (mia MIA) RemoveObject(name string) error {
 	return engine.RemoveItem(
-		iam.idb,
+		mia.idb,
 		true,
 		model.ITEM_TYPE_OBJ,
 		name,
@@ -203,10 +203,10 @@ func (iam IAM) RemoveObject(name string) error {
 }
 
 // RenameObject :
-// See details in iam/core/engine/items.go
-func (iam IAM) RenameObject(name string, newName string) error {
+// See details in mia/core/engine/items.go
+func (mia MIA) RenameObject(name string, newName string) error {
 	return engine.RenameItem(
-		iam.idb,
+		mia.idb,
 		true,
 		model.ITEM_TYPE_OBJ,
 		name,
@@ -215,10 +215,10 @@ func (iam IAM) RenameObject(name string, newName string) error {
 }
 
 // GetObject :
-// See details in iam/core/engine/items.go
-func (iam IAM) GetObject(name string) (model.Item, error) {
+// See details in mia/core/engine/items.go
+func (mia MIA) GetObject(name string) (model.Item, error) {
 	return engine.GetItem(
-		iam.idb,
+		mia.idb,
 		true,
 		model.ITEM_TYPE_OBJ,
 		name,
@@ -226,10 +226,10 @@ func (iam IAM) GetObject(name string) (model.Item, error) {
 }
 
 // AddObjectLink :
-// See details in iam/core/engine/items.go
-func (iam IAM) AddObjectLink(nameP string, nameC string) error {
+// See details in mia/core/engine/items.go
+func (mia MIA) AddObjectLink(nameP string, nameC string) error {
 	return engine.AddItemLink(
-		iam.idb,
+		mia.idb,
 		true,
 		model.ITEM_TYPE_OBJ,
 		nameP,
@@ -238,10 +238,10 @@ func (iam IAM) AddObjectLink(nameP string, nameC string) error {
 }
 
 //RemoveObjectLink :
-// See details in iam/core/engine/items.go
-func (iam IAM) RemoveObjectLink(nameP string, nameC string) error {
+// See details in mia/core/engine/items.go
+func (mia MIA) RemoveObjectLink(nameP string, nameC string) error {
 	return engine.RemoveItemLink(
-		iam.idb,
+		mia.idb,
 		true,
 		model.ITEM_TYPE_OBJ,
 		nameP,
@@ -250,9 +250,9 @@ func (iam IAM) RemoveObjectLink(nameP string, nameC string) error {
 }
 
 // GetObjectArchitecture :
-// See details in iam/core/engine/items.go
-func (iam IAM) GetObjectArchitecture() ([]string, map[string][]string, error) {
-	return engine.GetItemArchitectureNameOnly(iam.idb, true, model.ITEM_TYPE_OBJ)
+// See details in mia/core/engine/items.go
+func (mia MIA) GetObjectArchitecture() ([]string, map[string][]string, error) {
+	return engine.GetItemArchitectureNameOnly(mia.idb, true, model.ITEM_TYPE_OBJ)
 }
 
 //	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//
@@ -260,10 +260,10 @@ func (iam IAM) GetObjectArchitecture() ([]string, map[string][]string, error) {
 //	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//
 
 // AddDomain :
-// See details in iam/core/engine/items.go
-func (iam IAM) AddDomain(name string, nameParent string) error {
+// See details in mia/core/engine/items.go
+func (mia MIA) AddDomain(name string, nameParent string) error {
 	return engine.AddItem(
-		iam.idb,
+		mia.idb,
 		true,
 		model.ITEM_TYPE_DOMAIN,
 		name,
@@ -272,13 +272,13 @@ func (iam IAM) AddDomain(name string, nameParent string) error {
 }
 
 // AddDomainToRoot :
-// See details in iam/core/engine/items.go
+// See details in mia/core/engine/items.go
 // add domain litteraly under roots
-func (iam IAM) AddDomainToRoot(name string) error {
+func (mia MIA) AddDomainToRoot(name string) error {
 	rootName, _ := model.GetRootNameWithType(model.ITEM_TYPE_DOMAIN)
 
 	return engine.AddItem(
-		iam.idb,
+		mia.idb,
 		true,
 		model.ITEM_TYPE_DOMAIN,
 		name,
@@ -287,10 +287,10 @@ func (iam IAM) AddDomainToRoot(name string) error {
 }
 
 // RemoveDomain :
-// See details in iam/core/engine/items.go
-func (iam IAM) RemoveDomain(name string) error {
+// See details in mia/core/engine/items.go
+func (mia MIA) RemoveDomain(name string) error {
 	return engine.RemoveItem(
-		iam.idb,
+		mia.idb,
 		true,
 		model.ITEM_TYPE_DOMAIN,
 		name,
@@ -298,10 +298,10 @@ func (iam IAM) RemoveDomain(name string) error {
 }
 
 // RenameDomain :
-// See details in iam/core/engine/items.go
-func (iam IAM) RenameDomain(name string, newName string) error {
+// See details in mia/core/engine/items.go
+func (mia MIA) RenameDomain(name string, newName string) error {
 	return engine.RenameItem(
-		iam.idb,
+		mia.idb,
 		true,
 		model.ITEM_TYPE_DOMAIN,
 		name,
@@ -310,10 +310,10 @@ func (iam IAM) RenameDomain(name string, newName string) error {
 }
 
 // GetDomain :
-// See details in iam/core/engine/items.go
-func (iam IAM) GetDomain(name string) (model.Item, error) {
+// See details in mia/core/engine/items.go
+func (mia MIA) GetDomain(name string) (model.Item, error) {
 	return engine.GetItem(
-		iam.idb,
+		mia.idb,
 		true,
 		model.ITEM_TYPE_DOMAIN,
 		name,
@@ -321,10 +321,10 @@ func (iam IAM) GetDomain(name string) (model.Item, error) {
 }
 
 // AddDomainLink :
-// See details in iam/core/engine/items.go
-func (iam IAM) AddDomainLink(nameP string, nameC string) error {
+// See details in mia/core/engine/items.go
+func (mia MIA) AddDomainLink(nameP string, nameC string) error {
 	return engine.AddItemLink(
-		iam.idb,
+		mia.idb,
 		true,
 		model.ITEM_TYPE_DOMAIN,
 		nameP,
@@ -333,10 +333,10 @@ func (iam IAM) AddDomainLink(nameP string, nameC string) error {
 }
 
 // RemoveDomainLink :
-// See details in iam/core/engine/items.go
-func (iam IAM) RemoveDomainLink(nameP string, nameC string) error {
+// See details in mia/core/engine/items.go
+func (mia MIA) RemoveDomainLink(nameP string, nameC string) error {
 	return engine.RemoveItemLink(
-		iam.idb,
+		mia.idb,
 		true,
 		model.ITEM_TYPE_DOMAIN,
 		nameP,
@@ -345,9 +345,9 @@ func (iam IAM) RemoveDomainLink(nameP string, nameC string) error {
 }
 
 // GetDomainArchitecture :
-// See details in iam/core/engine/items.go
-func (iam IAM) GetDomainArchitecture() ([]string, map[string][]string, error) {
-	return engine.GetItemArchitectureNameOnly(iam.idb, true, model.ITEM_TYPE_DOMAIN)
+// See details in mia/core/engine/items.go
+func (mia MIA) GetDomainArchitecture() ([]string, map[string][]string, error) {
+	return engine.GetItemArchitectureNameOnly(mia.idb, true, model.ITEM_TYPE_DOMAIN)
 }
 
 //	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//
@@ -355,14 +355,14 @@ func (iam IAM) GetDomainArchitecture() ([]string, map[string][]string, error) {
 //	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//
 
 //AddAssignment :
-// See details in iam/core/engine/assignments.go
-func (iam IAM) AddAssignment(
+// See details in mia/core/engine/assignments.go
+func (mia MIA) AddAssignment(
 	roleName string,
 	subjName string,
 	domainName string,
 ) error {
 	return engine.AddAssignment(
-		iam.idb,
+		mia.idb,
 		true,
 		roleName,
 		subjName,
@@ -371,14 +371,14 @@ func (iam IAM) AddAssignment(
 }
 
 //RemoveAssignment :
-// See details in iam/core/engine/assignments.go
-func (iam IAM) RemoveAssignment(
+// See details in mia/core/engine/assignments.go
+func (mia MIA) RemoveAssignment(
 	roleName string,
 	subjName string,
 	domainName string,
 ) error {
 	return engine.RemoveAssignment(
-		iam.idb,
+		mia.idb,
 		true,
 		roleName,
 		subjName,
@@ -391,8 +391,8 @@ func (iam IAM) RemoveAssignment(
 //	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//
 
 //AddPermission :
-// See details in iam/core/engine/permissions.go
-func (iam IAM) AddPermission(
+// See details in mia/core/engine/permissions.go
+func (mia MIA) AddPermission(
 	roleName string,
 	domainName string,
 	objName string,
@@ -400,7 +400,7 @@ func (iam IAM) AddPermission(
 	eff bool,
 ) error {
 	return engine.AddPermission(
-		iam.idb,
+		mia.idb,
 		true,
 		roleName,
 		domainName,
@@ -411,15 +411,15 @@ func (iam IAM) AddPermission(
 }
 
 //RemovePermission :
-// See details in iam/core/engine/permissions.go
-func (iam IAM) RemovePermission(
+// See details in mia/core/engine/permissions.go
+func (mia MIA) RemovePermission(
 	roleName string,
 	domainName string,
 	objName string,
 	act constant.Action,
 ) error {
 	return engine.RemovePermission(
-		iam.idb,
+		mia.idb,
 		true,
 		roleName,
 		domainName,
@@ -433,15 +433,15 @@ func (iam IAM) RemovePermission(
 //	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//	//
 
 //Enforce :
-// See details in iam/core/engine/enforce.go
-func (iam IAM) Enforce(
+// See details in mia/core/engine/enforce.go
+func (mia MIA) Enforce(
 	subjectName string,
 	domainName string,
 	objectName string,
 	action constant.Action,
 ) (bool, error) {
 	return engine.Enforce(
-		iam.idb,
+		mia.idb,
 		subjectName,
 		domainName,
 		objectName,

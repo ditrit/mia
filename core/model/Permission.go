@@ -3,7 +3,7 @@
 package model
 
 import (
-	"iam/core/constant"
+	"mia/core/constant"
 )
 
 //Permission :

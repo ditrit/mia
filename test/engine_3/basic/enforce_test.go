@@ -1,7 +1,7 @@
 package engine_test
 
 import (
-	"iam/core/constant"
+	"mia/core/constant"
 	"testing"
 )
 
@@ -17,20 +17,20 @@ func TestBasicEnforce(t *testing.T) {
 		objGitCommit = "gitcommit"
 	)
 
-	_ = iam.AddSubjectToRoot(user1)
-	_ = iam.AddSubjectToRoot(user2)
-	_ = iam.AddDomainToRoot(domain)
-	_ = iam.AddObjectToRoot(objGit)
+	_ = mia.AddSubjectToRoot(user1)
+	_ = mia.AddSubjectToRoot(user2)
+	_ = mia.AddDomainToRoot(domain)
+	_ = mia.AddObjectToRoot(objGit)
 
-	_ = iam.AddObject(objGitPull, objGit)
-	_ = iam.AddObject(objGitPush, objGit)
-	_ = iam.AddObject(objGitCommit, objGit)
+	_ = mia.AddObject(objGitPull, objGit)
+	_ = mia.AddObject(objGitPush, objGit)
+	_ = mia.AddObject(objGitCommit, objGit)
 
-	_ = iam.AddRole(role)
-	_ = iam.AddAssignment(role, user1, domain)
-	_ = iam.AddPermission(role, constant.ROOT_DOMAINS, objGit, constant.ACTION_EXECUTE, true)
+	_ = mia.AddRole(role)
+	_ = mia.AddAssignment(role, user1, domain)
+	_ = mia.AddPermission(role, constant.ROOT_DOMAINS, objGit, constant.ACTION_EXECUTE, true)
 
-	eff, err := iam.Enforce(user1, domain, objGitCommit, constant.ACTION_EXECUTE)
+	eff, err := mia.Enforce(user1, domain, objGitCommit, constant.ACTION_EXECUTE)
 
 	if err != nil {
 		t.Errorf("Something went wrong")
@@ -40,9 +40,9 @@ func TestBasicEnforce(t *testing.T) {
 		t.Errorf("Wrong effect")
 	}
 
-	_ = iam.AddPermission(role, domain, objGitPull, constant.ACTION_EXECUTE, false)
+	_ = mia.AddPermission(role, domain, objGitPull, constant.ACTION_EXECUTE, false)
 
-	eff, err = iam.Enforce(user1, domain, objGitPull, constant.ACTION_EXECUTE)
+	eff, err = mia.Enforce(user1, domain, objGitPull, constant.ACTION_EXECUTE)
 
 	if err != nil {
 		t.Errorf("Something went wrong")

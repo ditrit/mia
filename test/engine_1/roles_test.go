@@ -36,8 +36,8 @@ func areModelsEquals(roles1 []string, roles2 []string) bool {
 func TestRoleGetAdd(t *testing.T) {
 	const roleName = "coucou"
 
-	found, err := iam.IsRoleExists(roleName)
-	_, err2 := iam.GetRole(roleName)
+	found, err := mia.IsRoleExists(roleName)
+	_, err2 := mia.GetRole(roleName)
 
 	if err != nil {
 		t.Errorf("shoud have worked")
@@ -48,17 +48,17 @@ func TestRoleGetAdd(t *testing.T) {
 	}
 
 	if found {
-		t.Errorf("coucou shouldn't be in the iam")
+		t.Errorf("coucou shouldn't be in the mia")
 	}
 
-	e := iam.AddRole(roleName)
+	e := mia.AddRole(roleName)
 
 	if e != nil {
 		t.Errorf("adding role should have worked")
 	}
 
-	found, err = iam.IsRoleExists(roleName)
-	role, err2 := iam.GetRole(roleName)
+	found, err = mia.IsRoleExists(roleName)
+	role, err2 := mia.GetRole(roleName)
 
 	if err != nil || err2 != nil {
 		t.Errorf("shoud have worked")
@@ -69,7 +69,7 @@ func TestRoleGetAdd(t *testing.T) {
 	}
 
 	if !found {
-		t.Errorf("coucou should be in the iam")
+		t.Errorf("coucou should be in the mia")
 	}
 }
 
@@ -78,50 +78,50 @@ func TestRoleRemove(t *testing.T) {
 		nameRole = "ProductTester"
 	)
 
-	_ = iam.AddRole("a")
-	_ = iam.AddRole("b")
-	_ = iam.AddRole("c")
+	_ = mia.AddRole("a")
+	_ = mia.AddRole("b")
+	_ = mia.AddRole("c")
 
-	beforeRoles, err := iam.GetAllRoles()
+	beforeRoles, err := mia.GetAllRoles()
 
 	if err != nil {
 		t.Errorf("should never happened")
 	}
 
 	if searchRole(beforeRoles, nameRole) {
-		t.Errorf("this role shouldn't be in the iam")
+		t.Errorf("this role shouldn't be in the mia")
 	}
 
-	errAdd := iam.AddRole(nameRole)
+	errAdd := mia.AddRole(nameRole)
 
 	if errAdd != nil {
 		t.Errorf("adding role should have worked")
 	}
 
-	roles, err := iam.GetAllRoles()
+	roles, err := mia.GetAllRoles()
 
 	if err != nil {
 		t.Errorf("should have worked")
 	}
 
 	if !searchRole(roles, nameRole) {
-		t.Errorf("this role should be in the iam")
+		t.Errorf("this role should be in the mia")
 	}
 
-	errRemove := iam.RemoveRole(nameRole)
+	errRemove := mia.RemoveRole(nameRole)
 
 	if errRemove != nil {
 		t.Errorf("remove role should have worked")
 	}
 
-	afterRoles, err := iam.GetAllRoles()
+	afterRoles, err := mia.GetAllRoles()
 
 	if err != nil {
 		t.Errorf("should have worked")
 	}
 
 	if searchRole(afterRoles, nameRole) {
-		t.Errorf("this role shouldn't be in the iam")
+		t.Errorf("this role shouldn't be in the mia")
 	}
 
 	if !areModelsEquals(beforeRoles, afterRoles) {
