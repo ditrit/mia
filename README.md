@@ -1,3 +1,3 @@
-# MIA
+# Mia
 
-MIA stands for Motor Interface Access
+## Description
