@@ -1,16 +1,16 @@
 package engine_test
 
 import (
-	"iam/core"
+	"mia/core"
 	"os"
 	"testing"
 )
 
 //nolint: gochecknoglobals
-var iam core.IAM
+var mia core.MIA
 
 func TestMain(m *testing.M) {
-	iam = core.NewIAM("test.db", true)
+	mia = core.NewMIA("test.db", true)
 
 	ret := m.Run()
 

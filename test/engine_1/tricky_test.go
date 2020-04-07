@@ -5,10 +5,10 @@ import (
 )
 
 func TestTrickyAdd(t *testing.T) {
-	_ = iam.AddSubjectToRoot("Batman")
-	_ = iam.AddSubject("Alfred", "Batman")
+	_ = mia.AddSubjectToRoot("Batman")
+	_ = mia.AddSubject("Alfred", "Batman")
 
-	err := iam.AddSubjectLink("Alfred", "Batman")
+	err := mia.AddSubjectLink("Alfred", "Batman")
 
 	if err == nil {
 		t.Errorf("should be an error, cycle appears")
@@ -16,20 +16,20 @@ func TestTrickyAdd(t *testing.T) {
 }
 
 func TestTrickyRemove(t *testing.T) {
-	_ = iam.AddObjectToRoot("Git")
-	_ = iam.AddObject("Github", "Git")
-	_ = iam.AddObject("Gitlab", "Git")
-	_ = iam.AddObject("Jenkins", "Gitlab")
+	_ = mia.AddObjectToRoot("Git")
+	_ = mia.AddObject("Github", "Git")
+	_ = mia.AddObject("Gitlab", "Git")
+	_ = mia.AddObject("Jenkins", "Gitlab")
 
-	err := iam.RemoveObjectLink("Gitlab", "Jenkins")
+	err := mia.RemoveObjectLink("Gitlab", "Jenkins")
 
 	if err == nil {
 		t.Errorf("should be an error, connectivity is broken")
 	}
 
-	_ = iam.AddObjectLink("Github", "Jenkins")
+	_ = mia.AddObjectLink("Github", "Jenkins")
 
-	err = iam.RemoveObjectLink("Gitlab", "Jenkins")
+	err = mia.RemoveObjectLink("Gitlab", "Jenkins")
 
 	if err != nil {
 		t.Errorf("should work now, new route available")

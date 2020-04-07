@@ -5,20 +5,20 @@ import (
 )
 
 func TestGetObjectUnknown(t *testing.T) {
-	_, err := iam.GetObject("alice")
+	_, err := mia.GetObject("alice")
 	if err == nil {
 		t.Errorf("get unknown shouldn't work")
 	}
 }
 
 func TestAddObject(t *testing.T) {
-	err := iam.AddObjectToRoot("bobby")
+	err := mia.AddObjectToRoot("bobby")
 
 	if err != nil {
 		t.Errorf("add should work : %s", err.Error())
 	}
 
-	subj, err := iam.GetObject("bobby")
+	subj, err := mia.GetObject("bobby")
 	if err != nil {
 		t.Errorf("get should work : %s", err.Error())
 	}
@@ -27,23 +27,23 @@ func TestAddObject(t *testing.T) {
 		t.Errorf("name is not the same")
 	}
 
-	err = iam.AddObjectToRoot("")
+	err = mia.AddObjectToRoot("")
 
 	if err == nil {
 		t.Errorf("should not add an empty Object")
 	}
 
-	err = iam.AddObjectToRoot("bobby")
+	err = mia.AddObjectToRoot("bobby")
 
 	if err == nil {
 		t.Errorf("should not add a Object that's already existe")
 	}
 
-	_ = iam.AddObjectToRoot("alice")
-	_ = iam.AddObjectToRoot("carole")
-	_ = iam.AddObjectToRoot("david")
+	_ = mia.AddObjectToRoot("alice")
+	_ = mia.AddObjectToRoot("carole")
+	_ = mia.AddObjectToRoot("david")
 
-	subj, err = iam.GetObject("alice")
+	subj, err = mia.GetObject("alice")
 	if err != nil {
 		t.Errorf("get should work : %s", err.Error())
 	}
@@ -54,50 +54,50 @@ func TestAddObject(t *testing.T) {
 }
 
 func TestRemoveObject(t *testing.T) {
-	_ = iam.AddObjectToRoot("elodie")
+	_ = mia.AddObjectToRoot("elodie")
 
-	err := iam.RemoveObject("elodie")
+	err := mia.RemoveObject("elodie")
 	if err != nil {
 		t.Errorf("remove should work : %s", err.Error())
 	}
 
-	err = iam.RemoveObject("engie")
+	err = mia.RemoveObject("engie")
 	if err == nil {
-		t.Errorf("remove should failed, engie is not in iam")
+		t.Errorf("remove should failed, engie is not in mia")
 	}
 }
 
 func TestRenameObject(t *testing.T) {
-	_ = iam.AddObjectToRoot("fan")
-	_ = iam.AddObjectToRoot("gwen")
+	_ = mia.AddObjectToRoot("fan")
+	_ = mia.AddObjectToRoot("gwen")
 
-	fanFromDB1, _ := iam.GetObject("fan")
+	fanFromDB1, _ := mia.GetObject("fan")
 
-	err := iam.RenameObject("fan", "new fan")
+	err := mia.RenameObject("fan", "new fan")
 
 	if err != nil {
 		t.Errorf("rename should work : %s", err.Error())
 	}
 
-	fanFromDB2, _ := iam.GetObject("new fan")
+	fanFromDB2, _ := mia.GetObject("new fan")
 
 	if fanFromDB1.ID != fanFromDB2.ID {
 		t.Errorf("rename should not change IDs")
 	}
 
-	err = iam.RenameObject("folie", "try try")
+	err = mia.RenameObject("folie", "try try")
 
 	if err == nil {
 		t.Errorf("rename non existing Object should have failed")
 	}
 
-	err = iam.RenameObject("gwen", "")
+	err = mia.RenameObject("gwen", "")
 
 	if err == nil {
 		t.Errorf("rename should have failed cause new name is empty")
 	}
 
-	err = iam.RenameObject("gwen", "new fan")
+	err = mia.RenameObject("gwen", "new fan")
 
 	if err == nil {
 		t.Errorf("rename should have failed user existed")
@@ -105,22 +105,22 @@ func TestRenameObject(t *testing.T) {
 }
 
 func TestAddObjectLink(t *testing.T) {
-	_ = iam.AddObjectToRoot("helene")
-	_ = iam.AddObjectToRoot("ismail")
+	_ = mia.AddObjectToRoot("helene")
+	_ = mia.AddObjectToRoot("ismail")
 
-	err := iam.AddObjectLink("helene", "ismail")
+	err := mia.AddObjectLink("helene", "ismail")
 
 	if err != nil {
 		t.Errorf("add Object link should work : %s", err.Error())
 	}
 
-	err = iam.AddObjectLink("ismail", "joseph")
+	err = mia.AddObjectLink("ismail", "joseph")
 
 	if err == nil {
-		t.Errorf("add Object link shouldn't work cause joseph not in iam")
+		t.Errorf("add Object link shouldn't work cause joseph not in mia")
 	}
 
-	err = iam.AddObjectLink("helene", "ismail")
+	err = mia.AddObjectLink("helene", "ismail")
 
 	if err == nil {
 		t.Errorf("add Object link shouldn't work cause Object link already exist")
@@ -128,18 +128,18 @@ func TestAddObjectLink(t *testing.T) {
 }
 
 func TestRemoveObjectLink(t *testing.T) {
-	_ = iam.AddObjectToRoot("kevin")
-	_ = iam.AddObjectToRoot("laure")
+	_ = mia.AddObjectToRoot("kevin")
+	_ = mia.AddObjectToRoot("laure")
 
-	_ = iam.AddObjectLink("kevin", "laure")
+	_ = mia.AddObjectLink("kevin", "laure")
 
-	err := iam.RemoveObjectLink("kevin", "laure")
+	err := mia.RemoveObjectLink("kevin", "laure")
 
 	if err != nil {
 		t.Errorf("remove Object link should have worked")
 	}
 
-	err = iam.RemoveObjectLink("laure", "maude")
+	err = mia.RemoveObjectLink("laure", "maude")
 
 	if err == nil {
 		t.Errorf("remove Object link should have failed cause it doesn't exist")

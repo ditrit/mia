@@ -1,17 +1,17 @@
 // Package engine :
-// Handling assignments queries from IAM
+// Handling assignments queries from MIA
 package engine
 
 import (
 	"errors"
-	"iam/core/database"
-	"iam/core/model"
+	"mia/core/database"
+	"mia/core/model"
 
 	"github.com/jinzhu/gorm"
 )
 
 func askDBForAssignments(
-	idb database.IAMDatabase,
+	idb database.MIADatabase,
 	haveToOpenConnection bool,
 	roleName string,
 	subjName string,
@@ -70,12 +70,12 @@ func askDBForAssignments(
 }
 
 //AddAssignment :
-// adds an assignment in the iam
+// adds an assignment in the mia
 // returns an error if
 //	- one of the role, the subject or the domain does not exist
 //	- the assignment already exists
 func AddAssignment(
-	idb database.IAMDatabase,
+	idb database.MIADatabase,
 	haveToOpenConnection bool,
 	roleName string,
 	subjName string,
@@ -94,11 +94,11 @@ func AddAssignment(
 }
 
 //RemoveAssignment :
-// remove the assignment from the iam
+// remove the assignment from the mia
 // returns an error if
 //	- the assignment does not exist
 func RemoveAssignment(
-	idb database.IAMDatabase,
+	idb database.MIADatabase,
 	haveToOpenConnection bool,
 	roleName string,
 	subjName string,

@@ -1,7 +1,7 @@
 package utils_test
 
 import (
-	"iam/core/utils"
+	"mia/core/utils"
 	"testing"
 )
 

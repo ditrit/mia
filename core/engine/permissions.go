@@ -1,18 +1,18 @@
 // Package engine :
-// Handling permissions queries from IAM
+// Handling permissions queries from MIA
 package engine
 
 import (
 	"errors"
-	"iam/core/constant"
-	"iam/core/database"
-	"iam/core/model"
+	"mia/core/constant"
+	"mia/core/database"
+	"mia/core/model"
 
 	"github.com/jinzhu/gorm"
 )
 
 func askDBForPermissions(
-	idb database.IAMDatabase,
+	idb database.MIADatabase,
 	haveToOpenConnection bool,
 	roleName string,
 	domainName string,
@@ -74,12 +74,12 @@ func askDBForPermissions(
 }
 
 //AddPermission :
-// adds an permission in the iam
+// adds an permission in the mia
 // returns an error if
 //	- one of the role, the subject or the domain does not exist
 //	- the permission already exists
 func AddPermission(
-	idb database.IAMDatabase,
+	idb database.MIADatabase,
 	haveToOpenConnection bool,
 	roleName string,
 	domainName string,
@@ -101,11 +101,11 @@ func AddPermission(
 }
 
 //RemovePermission :
-// remove the permission from the iam
+// remove the permission from the mia
 // returns an error if
 //	- the permission does not exist
 func RemovePermission(
-	idb database.IAMDatabase,
+	idb database.MIADatabase,
 	haveToOpenConnection bool,
 	roleName string,
 	domainName string,

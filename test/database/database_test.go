@@ -2,13 +2,13 @@ package database_test
 
 import (
 	"fmt"
-	"iam/core/database"
-	"iam/core/model"
+	"mia/core/database"
+	"mia/core/model"
 	"os"
 	"testing"
 )
 
-func testClosingWithoutOpening(t *testing.T, db database.IAMDatabase) {
+func testClosingWithoutOpening(t *testing.T, db database.MIADatabase) {
 	defer func() {
 		if r := recover(); r != nil {
 			fmt.Println("good behavior")
@@ -19,7 +19,7 @@ func testClosingWithoutOpening(t *testing.T, db database.IAMDatabase) {
 	t.Errorf("close without opening should panic")
 }
 
-func testConcurrency(t *testing.T, db database.IAMDatabase) {
+func testConcurrency(t *testing.T, db database.MIADatabase) {
 	role, _ := model.NewRole("CTO")
 	roleCand, _ := model.NewRole("CTO")
 
@@ -54,7 +54,7 @@ func testConcurrency(t *testing.T, db database.IAMDatabase) {
 }
 
 func TestDatabase(t *testing.T) {
-	db := database.NewIAMDatabase("test.db")
+	db := database.NewMIADatabase("test.db")
 
 	defer os.Remove("test.db") //nolint: errcheck
 

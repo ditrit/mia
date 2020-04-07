@@ -4,14 +4,14 @@ package engine
 
 import (
 	"errors"
-	"iam/core/database"
-	"iam/core/model"
-	"iam/core/utils"
+	"mia/core/database"
+	"mia/core/model"
+	"mia/core/utils"
 )
 
 //nolint: funlen, gocyclo
 func _getAncestorOf(
-	idb database.IAMDatabase,
+	idb database.MIADatabase,
 	haveToOpenConnection bool,
 	iType model.ItemType,
 	itemName string,
@@ -80,7 +80,7 @@ func _getAncestorOf(
 //nolint: unparam
 // remove this above if haveToOpenConnection is needed
 func getAncestorOf(
-	idb database.IAMDatabase,
+	idb database.MIADatabase,
 	haveToOpenConnection bool,
 	iType model.ItemType,
 	itemName string,
@@ -89,7 +89,7 @@ func getAncestorOf(
 }
 
 func getAncestorOfIgnoringParent(
-	idb database.IAMDatabase,
+	idb database.MIADatabase,
 	haveToOpenConnection bool,
 	iType model.ItemType,
 	itemName string,

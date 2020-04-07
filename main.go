@@ -13,7 +13,7 @@ package main
 // }
 
 func main() {
-	// iam := core.NewIAM("test.db", true)
+	// mia := core.NewMIA("test.db", true)
 
 	// for _, roleName := range getDefaultRoles() {
 

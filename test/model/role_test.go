@@ -1,7 +1,7 @@
 package model_test
 
 import (
-	"iam/core/model"
+	"mia/core/model"
 	"testing"
 )
 
